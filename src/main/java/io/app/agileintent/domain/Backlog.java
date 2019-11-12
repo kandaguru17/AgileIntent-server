@@ -80,7 +80,6 @@ public class Backlog {
 	}
 
 	
-	
 	public void addProjectTask(ProjectTask projectTask) {
 		this.projectTasks.add(projectTask);
 		projectTask.setBacklog(this);

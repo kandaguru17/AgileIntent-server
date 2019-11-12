@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -17,6 +18,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Project {
@@ -24,52 +26,62 @@ public class Project {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@NotBlank(message="project name is required")
+
+	@NotBlank(message = "project name is required")
 	private String projectName;
-	//not using the name projectId because jpa uses project_id to establish relationships
-	@NotBlank(message="project identifier is required")
-	@Size(min = 4,max=5)
-	@Column(updatable = false,unique = true)
+	// not using the name projectId because jpa uses project_id to establish
+	// relationships
+	@NotBlank(message = "project identifier is required")
+	@Size(min = 4, max = 5)
+	@Column(updatable = false, unique = true)
 	private String projectIdentifier;
-	
+
 	@Lob
 	@NotBlank(message = "description is required")
 	private String description;
-	
+
 	@JsonFormat(pattern = "yyyy-mm-dd")
 	private Date startDate;
 	@JsonFormat(pattern = "yyyy-mm-dd")
 	private Date endDate;
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",locale="en_NZ",timezone = "Pacific/Auckland")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")
 	private Date createdAt;
-	@JsonFormat(pattern = "yyyy-MM"
-			+ "-dd HH:mm:ss",locale="en_NZ",timezone = "Pacific/Auckland")
+	@JsonFormat(pattern = "yyyy-MM" + "-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")
 	private Date updatedAt;
-	
-	
-	@OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy = "project")
+
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
 	private Backlog backlog;
 	
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name="user_id")
+	@JsonIgnore
+	private User user;
+	
+	private String reportingPerson;
+	
+
 	@PrePersist
 	public void onCreate() {
-		this.createdAt=new Date();		
-	}
-	
-	@PreUpdate
-	public void onUpdate() {
-		this.updatedAt=new Date();
+		this.createdAt = new Date();
 	}
 
-	
-	public Project() {}
-	
-	//helper method to establish bidirectional relationship with backlog
+	@PreUpdate
+	public void onUpdate() {
+		this.updatedAt = new Date();
+	}
+
+	public Project() {
+	}
+
+	// helper method to establish bidirectional relationship with backlog
 	public void addBackLog(Backlog backlog) {
 		this.setBacklog(backlog);
 		backlog.setProject(this);
 	}
+	
+
+
 
 	public Long getId() {
 		return id;
@@ -142,8 +154,21 @@ public class Project {
 	public void setBacklog(Backlog backlog) {
 		this.backlog = backlog;
 	}
-	
 
-	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public String getReportingPerson() {
+		return reportingPerson;
+	}
+
+	public void setReportingPerson(String reportingPerson) {
+		this.reportingPerson = reportingPerson;
+	}
 	
 }
