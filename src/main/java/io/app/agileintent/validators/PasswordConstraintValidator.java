@@ -14,11 +14,17 @@ import org.passay.PasswordValidator;
 import org.passay.RuleResult;
 import org.passay.WhitespaceRule;
 
+import io.app.agileintent.exceptions.UserProfileException;
+
 public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, String> {
 
 	@Override
 	public boolean isValid(String password, ConstraintValidatorContext context) {
 
+		if(password==null)
+			throw new UserProfileException("Password Cannot be null");
+		
+		
 		PasswordValidator validator = new PasswordValidator(Arrays.asList(
 				// at least 8 characters
 				//new LengthRule(8, 15),

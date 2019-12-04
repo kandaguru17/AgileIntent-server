@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -45,6 +46,7 @@ public class Project {
 	@JsonFormat(pattern = "yyyy-mm-dd")
 	private Date endDate;
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")
+	@Column(updatable = false)
 	private Date createdAt;
 	@JsonFormat(pattern = "yyyy-MM" + "-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")
 	private Date updatedAt;
@@ -54,10 +56,11 @@ public class Project {
 	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name="user_id")
+	@JoinColumn(name="user_id",updatable = false)
 	@JsonIgnore
 	private User user;
 	
+	@Column(updatable = false)
 	private String reportingPerson;
 	
 
@@ -80,8 +83,6 @@ public class Project {
 		backlog.setProject(this);
 	}
 	
-
-
 
 	public Long getId() {
 		return id;

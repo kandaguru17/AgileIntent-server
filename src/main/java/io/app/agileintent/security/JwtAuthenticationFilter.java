@@ -26,18 +26,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private JwtTokenProvider jwtTokenProvider;
 
 	@Autowired
-	CustomUserDetailService customUserDetailService;
+	private CustomUserDetailService customUserDetailService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-
 		
 		try {
 			
 			String token = request.getHeader(HEADER);
+			System.out.println(token);
 			String jwt = token.substring(7, token.length());
-
+			
 			if (!(jwt.equals(null)) && jwtTokenProvider.ValidateToken(jwt)) {
 
 				String username = jwtTokenProvider.getUserNameFromJwt(jwt);
@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 						Collections.emptyList());
 
 				
-				// Loading the session to the authentication object -- not required for jwt authorization
+				// Loading the session to the authentication object -- not required for jwt authorization as it is state less
 				/*
 				 * authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				 */
@@ -56,7 +56,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 		} catch (Exception e) {
-			logger.warn("issues with the spring security context");
+			e.printStackTrace();
+			logger.warn("issues with setting up the spring security context");
 		}
 		
 		filterChain.doFilter(request, response);

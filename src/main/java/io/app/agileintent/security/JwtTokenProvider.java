@@ -47,6 +47,7 @@ public class JwtTokenProvider {
 	//validate token parses the token and return true if token is valid
 	public boolean ValidateToken(String token) {
 		try {
+			//parsing the token using the parseclaimsjws() because its signed and is a jws
 			Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token);
 			return true;
 		} catch (SignatureException e) {
@@ -66,7 +67,6 @@ public class JwtTokenProvider {
 
 	
 	public String getUserNameFromJwt(String jwt) {
-		
 		Claims claims=Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(jwt).getBody();
 		String username =(String) claims.get("username");
 		return username;

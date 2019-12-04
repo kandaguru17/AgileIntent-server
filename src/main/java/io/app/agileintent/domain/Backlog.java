@@ -31,7 +31,7 @@ public class Backlog {
     @JoinColumn(name="project_id",nullable = false,updatable = false)
 	private Project project;
 	
-	@OneToMany(cascade = CascadeType.PERSIST,fetch =FetchType.EAGER,mappedBy = "backlog",orphanRemoval = true )
+	@OneToMany(cascade = CascadeType.ALL,fetch =FetchType.EAGER,mappedBy = "backlog",orphanRemoval = true )
 	private List<ProjectTask> projectTasks= new ArrayList<ProjectTask>();
 
 	public Backlog() {}

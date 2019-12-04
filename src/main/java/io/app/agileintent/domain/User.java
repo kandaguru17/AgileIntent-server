@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -39,6 +40,7 @@ public class User implements UserDetails {
 
 	@NotBlank(message = "User name cannot be empty")
 	@Column(unique = true)
+	@Email(message = "User name must be a Email Id")
 	private String username;
 
 	@NotBlank(message = "First Name is mandatory")
@@ -47,7 +49,6 @@ public class User implements UserDetails {
 	@NotBlank(message = "Last Name is mandatory")
 	private String lastName;
 
-	@NotBlank(message = "Password in mandatory")
 	@ValidPassword
 	private String password;
 

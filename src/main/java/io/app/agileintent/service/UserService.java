@@ -10,8 +10,5 @@ import io.app.agileintent.domain.User;
 public interface UserService {
 
 	User save(@Valid User user);
-
-	
-	
 	
 }

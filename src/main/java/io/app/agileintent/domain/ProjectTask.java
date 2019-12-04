@@ -9,10 +9,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,29 +30,40 @@ public class ProjectTask {
 
 	@Column(updatable = false,unique = true)
 	private String projectTaskSequence;
+	
 	@NotEmpty(message = "Please include a project summary")
 	private String summary;
 
+	@Lob
 	private String acceptanceCriteria;
+	
+	@NotEmpty(message = "status of the Project Task is required")
 	private String status;
+	
+	@NotNull(message = "Priority of the Project Task is required")
+	@Min(0)
+	@Max(3)
 	private Integer priority;
+	
 	private Date dueDate;
 
 	@Column(updatable = false)
 	private String projectIdentifier;
+	
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",locale="en_NZ",timezone = "Pacific/Auckland")
+	@Column(updatable = false)
 	private Date createdAt;
+	
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",locale="en_NZ",timezone = "Pacific/Auckland")
 	private Date updatedAt;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "backlog_id",updatable = false,nullable=true)
+	@JoinColumn(name = "backlog_id",updatable = false,nullable=false)
 	@JsonIgnore
 	private Backlog backlog;
 	
 
-	public ProjectTask() {
-	}
+	public ProjectTask() {}
 
 	@PrePersist
 	public void onCreate() {

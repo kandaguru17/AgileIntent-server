@@ -10,7 +10,8 @@ import io.app.agileintent.domain.Project;
 @Service
 public interface ProjectService {
 
-	public Project addOrUpdateProject(Project project,Principal principal);
+	public Project addProject(Project project,Principal principal);
+	public Project updateProject(Project project,String projectIdentifier,Principal principal);
 	public Project getProjectByProjectIdentifier(String projectIdentifier,Principal principal);
 	public List<Project> getAllProjects(Principal principal);
 	public void deleteProjectByProjectIdentifier(String projectIdentifier,Principal principal);

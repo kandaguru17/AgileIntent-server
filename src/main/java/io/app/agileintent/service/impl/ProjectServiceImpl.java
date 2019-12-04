@@ -10,8 +10,6 @@ import io.app.agileintent.domain.Backlog;
 import io.app.agileintent.domain.Project;
 import io.app.agileintent.domain.User;
 import io.app.agileintent.exceptions.ProjectIdException;
-import io.app.agileintent.exceptions.UserProfileException;
-import io.app.agileintent.repositories.BacklogRepository;
 import io.app.agileintent.repositories.ProjectRepository;
 import io.app.agileintent.repositories.UserRepository;
 import io.app.agileintent.service.ProjectService;
@@ -23,44 +21,28 @@ public class ProjectServiceImpl implements ProjectService {
 	private ProjectRepository projectRepository;
 
 	@Autowired
-	private BacklogRepository backlogRepository;
-
-	@Autowired
 	private UserRepository userRepository;
 
-	public Project addOrUpdateProject(Project project, Principal principal) throws ProjectIdException {
+	public Project addProject(Project project, Principal principal) throws ProjectIdException {
 
 		String projectIdentifier = project.getProjectIdentifier().toUpperCase();
 		User user = userRepository.findByUsername(principal.getName());
-
 		Project foundProject = projectRepository.findByProjectIdentifier(projectIdentifier);
-		System.out.println(foundProject);
-
-		if (foundProject!=null
-				&& (!foundProject.getReportingPerson().equals(user.getFirstName() + " " + user.getLastName()))) {
-			throw new UserProfileException("Not Authorised to update Project with Id " + projectIdentifier);
-		}
-
+		
 		try {
-			
-			if (foundProject != null) {
-				project.setCreatedAt(foundProject.getCreatedAt());
-				project.setBacklog(backlogRepository.findByProjectIdentifier(projectIdentifier));
-			}
-
 			if (foundProject == null) {
+				
+				//a project must have a backlog
 				Backlog backlog = new Backlog();
 				backlog.setProjectIdentifier(projectIdentifier);
 				// setting up the bidirectional relationship between project and backlog
 				project.addBackLog(backlog);
 				// setting up bidirectional relationship between project and user
 				user.addProject(project);
-				
+				//setting the reporting person to current user
+				project.setReportingPerson(user.getUsername());
 			}
 			
-			
-			project.setReportingPerson(user.getFirstName() + " " + user.getLastName());
-			System.out.println("===> " +user.getFirstName() + " " + user.getLastName());
 			// saves backlog as well due to cascading
 			return projectRepository.save(project);
 
@@ -72,15 +54,13 @@ public class ProjectServiceImpl implements ProjectService {
 	} 
 
 	
-	
 	public Project getProjectByProjectIdentifier(String projectIdentifier, Principal principal) {
 
 		Project project = projectRepository.findByProjectIdentifier(projectIdentifier);
 		if (project == null)
 			throw new ProjectIdException("Project Id " + projectIdentifier + " does not exist");
-
-		User user = userRepository.findByUsername(principal.getName());
-		if (!project.getReportingPerson().equals(user.getFirstName() + " " + user.getLastName())) {
+		
+		if (!project.getReportingPerson().equals(principal.getName())) {
 			throw new ProjectIdException("Not Authorised to access Project with Id " + projectIdentifier);
 		}
 
@@ -88,30 +68,32 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	
-	
-//	public  Project UpdateProject(Project project,Principal principal) {
-//			
-//		Project foundProject= getProjectByProjectIdentifier(project.getProjectIdentifier(), principal);
-//		projectRepository.save(project);
-//	}
-	
+	public Project updateProject(Project project,String projectIdentifier,Principal principal) {
 
+		Project foundProject=getProjectByProjectIdentifier(projectIdentifier, principal);
+		project.setId(foundProject.getId());
+		project.addBackLog(foundProject.getBacklog());
+	
+		/*
+		  	made the column (updatable=false)
+			project.setCreatedAt(foundProject.getCreatedAt());
+			project.setReportingPerson(foundProject.getReportingPerson());
+			project.setUser(foundProject.getUser());
+		 */	
+		return projectRepository.save(project);
+		
+	}
+	
 	public List<Project> getAllProjects(Principal principal) {
-		User user = userRepository.findByUsername(principal.getName());
-		return projectRepository.findAllByReportingPerson(user.getFirstName() + " " + user.getLastName());
+		
+		return projectRepository.findAllByReportingPerson(principal.getName());
 	}
 
 	public void deleteProjectByProjectIdentifier(String projectIdentifier, Principal principal) {
 
-		Project project = projectRepository.findByProjectIdentifier(projectIdentifier);
-		if (project == null)
-			throw new ProjectIdException("Project Id " + projectIdentifier + " does not exist");
-
+		Project project =getProjectByProjectIdentifier(projectIdentifier, principal);
 		User user = userRepository.findByUsername(principal.getName());
-		if (!project.getReportingPerson().equals(user.getFirstName() + " " + user.getLastName())) {
-			throw new ProjectIdException("Not Authorised to delete Project with Id " + projectIdentifier);
-		}
-
+		//breaking the bi-directional link
 		user.removeProject(project);
 		projectRepository.delete(project);
 	}

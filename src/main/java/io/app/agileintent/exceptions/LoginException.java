@@ -7,8 +7,8 @@ public class LoginException {
 
 	public LoginException() {
 
-		this.username = "Bad Credentials";
-		this.password = "Bad Credentials";
+		this.username = "Invalid Credentials";
+		this.password = "Invalid Credentials";
 
 	}
 
