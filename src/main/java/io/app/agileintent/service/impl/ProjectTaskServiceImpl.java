@@ -44,7 +44,8 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
 			if (projectTask.getPriority() == null || projectTask.getPriority() == 0)
 				projectTask.setPriority(4);
-
+			
+			projectTask.setIssueType(projectTask.getIssueType().toUpperCase());
 			// bi-direction relationship
 			backlog.addProjectTask(projectTask);
 
@@ -53,7 +54,7 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
 		} catch (Exception e) {
 
-			// e.printStackTrace();
+			 e.getMessage();
 			throw new ProjectNotFoundException("Backlog for the project ID " + projectIdentifier + " not found");
 
 		}
@@ -94,6 +95,8 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
 		if (projectTask.getPriority() == null || projectTask.getPriority() == 0)
 			projectTask.setPriority(4);
+		
+		projectTask.setIssueType(projectTask.getIssueType().toUpperCase());
 		
 //		have set the column updatable =false
 //		projectTask.setBacklog(foundProjectTask.getBacklog());

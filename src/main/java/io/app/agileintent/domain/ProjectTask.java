@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,8 +20,12 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.ISBN;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.app.agileintent.validators.ValidIssueType;
 
 @Entity
 public class ProjectTask {
@@ -41,14 +47,15 @@ public class ProjectTask {
 	private String status;
 	
 	@NotNull(message = "Priority of the Project Task is required")
-	@Min(0)
-	@Max(3)
+	@Min(1)
+	@Max(4)
 	private Integer priority;
 	
-	private Date dueDate;
-
 	@Column(updatable = false)
 	private String projectIdentifier;
+	
+	@JsonFormat(pattern="yyyy-MM-dd",locale="en_NZ",timezone = "Pacific/Auckland")
+	private Date dueDate;
 	
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",locale="en_NZ",timezone = "Pacific/Auckland")
 	@Column(updatable = false)
@@ -62,6 +69,9 @@ public class ProjectTask {
 	@JsonIgnore
 	private Backlog backlog;
 	
+	@NotNull
+	@ValidIssueType(enumClass = IssueType.class,ignoreCase = true)
+	private String issueType;
 
 	public ProjectTask() {}
 
@@ -162,6 +172,14 @@ public class ProjectTask {
 
 	public void setBacklog(Backlog backlog) {
 		this.backlog = backlog;
+	}
+	
+	public String getIssueType() {
+		return issueType;
+	}
+
+	public void setIssueType(String issueType) {
+		this.issueType = issueType;
 	}
 
 	@Override

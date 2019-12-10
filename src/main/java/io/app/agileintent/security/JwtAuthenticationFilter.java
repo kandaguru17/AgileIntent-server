@@ -35,7 +35,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		try {
 			
 			String token = request.getHeader(HEADER);
-			System.out.println(token);
 			String jwt = token.substring(7, token.length());
 			
 			if (!(jwt.equals(null)) && jwtTokenProvider.ValidateToken(jwt)) {
