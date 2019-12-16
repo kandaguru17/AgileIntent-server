@@ -2,7 +2,6 @@ package io.app.agileintent.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +30,14 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 	public final ResponseEntity<?> handleUserAlreadyExistException(UserProfileException ex, WebRequest req){
 		UserProfileExceptionMessage userExceptionMessage=new UserProfileExceptionMessage(ex.getUserExecetpionMessage());
 		return new ResponseEntity<UserProfileExceptionMessage>(userExceptionMessage,HttpStatus.BAD_REQUEST);
+		
+	}
+	
+	
+	@ExceptionHandler
+	public final ResponseEntity<?> handleCommentException(CommentException ex, WebRequest req){
+		CommentExceptionMessage commentExceptionMessage=new CommentExceptionMessage(ex.getMessage());
+		return new ResponseEntity<CommentExceptionMessage>(commentExceptionMessage,HttpStatus.BAD_REQUEST);
 		
 	}
 	

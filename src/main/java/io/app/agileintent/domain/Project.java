@@ -1,6 +1,8 @@
 package io.app.agileintent.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,9 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -53,16 +54,18 @@ public class Project {
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
 	private Backlog backlog;
-	
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="user_id",updatable = false)
+
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name="user_id",updatable = false)
+//	@JsonIgnore
+//	private User user;
+
+	@ManyToMany(mappedBy = "projects")
 	@JsonIgnore
-	private User user;
-	
+	private List<User> users = new ArrayList<User>();
+
 	@Column(updatable = false)
 	private String reportingPerson;
-	
 
 	@PrePersist
 	public void onCreate() {
@@ -83,6 +86,11 @@ public class Project {
 		backlog.setProject(this);
 	}
 	
+	
+	public void addUser(User user) {
+		this.getUsers().add(user);
+		user.getProjects().add(this);
+	}
 
 	public Long getId() {
 		return id;
@@ -156,12 +164,20 @@ public class Project {
 		this.backlog = backlog;
 	}
 
-	public User getUser() {
-		return user;
+//	public User getUser() {
+//		return user;
+//	}
+//
+//	public void setUser(User user) {
+//		this.user = user;
+//	}
+
+	public List<User> getUsers() {
+		return users;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
 	public String getReportingPerson() {
@@ -171,5 +187,12 @@ public class Project {
 	public void setReportingPerson(String reportingPerson) {
 		this.reportingPerson = reportingPerson;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Project [id=" + id + ", projectName=" + projectName + ", projectIdentifier=" + projectIdentifier
+				+ ", description=" + description + ", startDate=" + startDate + ", endDate=" + endDate + ", createdAt="
+				+ createdAt + ", updatedAt=" + updatedAt + ", reportingPerson=" + reportingPerson + "]";
+	}
+
 }

@@ -40,7 +40,7 @@ public class JwtTokenProvider {
 
 		return Jwts.builder().setClaims(claims).setSubject(user.getUsername()).setIssuedAt(now).setExpiration(Expiry)
 				.signWith(SignatureAlgorithm.HS256, JWT_SECRET).compact();
-
+		
 	}
 
 	

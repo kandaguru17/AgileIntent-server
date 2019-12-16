@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import io.app.agileintent.domain.User;
 import io.app.agileintent.repositories.UserRepository;
 import io.app.agileintent.service.CustomUserDetailService;
@@ -13,9 +12,8 @@ import io.app.agileintent.service.CustomUserDetailService;
 public class CustomUserDetailServiceImpl implements CustomUserDetailService {
 
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 	
-
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 

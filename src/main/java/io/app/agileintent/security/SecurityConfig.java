@@ -64,11 +64,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.antMatchers(H2_ROUTE).permitAll()
 		.anyRequest().authenticated();
 		
-		
+
 		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		
 	}
-	
 	
 	@Override
 	@Bean

@@ -84,6 +84,6 @@ public class ProjectController {
 		projectService.deleteProjectByProjectIdentifier(projectIdentifier,principal);
 		return new ResponseEntity<String>("project successfully deleted",HttpStatus.OK);
 	}
-
+	
 }
 

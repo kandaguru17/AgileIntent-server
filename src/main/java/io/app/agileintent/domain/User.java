@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,18 +11,19 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.app.agileintent.validators.ValidPassword;
 
 @Entity
@@ -40,7 +40,7 @@ public class User implements UserDetails {
 
 	@NotBlank(message = "User name cannot be empty")
 	@Column(unique = true)
-	@Email(message = "User name must be a Email Id")
+	@Email(message = "User name must be a Email Id", groups = { AddUser.class })
 	private String username;
 
 	@NotBlank(message = "First Name is mandatory")
@@ -50,21 +50,28 @@ public class User implements UserDetails {
 	private String lastName;
 
 	@ValidPassword
+	@JsonIgnore
 	private String password;
 
 	@Transient
+	@JsonIgnore
 	private String confirmPassword;
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")
 	private Date createdAt;
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")
 	private Date updatedAt;
+
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "user_project", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "project_id") })
+	@JsonIgnore
+	private List<Project> projects = new ArrayList<Project>();
 	
-	// one to many with projects
-	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
-	List<Project> projects=new ArrayList<Project>();
-	
-	
+	@OneToMany(cascade = CascadeType.ALL,mappedBy = "user")
+	@JsonIgnore
+	private List<Comment> comments= new ArrayList<>();
+
 	@PrePersist
 	public void onCreate() {
 		this.createdAt = new Date();
@@ -77,7 +84,30 @@ public class User implements UserDetails {
 
 	public User() {
 	}
+
+	// convenience methods for establishing bi directional relationship
+
+	public void addProject(Project project) {
+		this.projects.add(project);
+		project.getUsers().add(this);
+		// project.setUser(this);
+	}
+
+	public void removeProject(Project project) {
+		this.projects.remove(project);
+		project.getUsers().remove(this);
+		// project.setUsers(null);
+	}
 	
+	public void addComment(Comment comment) {
+		this.comments.add(comment);
+		comment.setUser(this);
+	}
+	
+	public void removeComment(Comment comment) {
+		this.comments.remove(comment);
+		comment.setUser(null);
+	}
 
 	public Long getId() {
 		return id;
@@ -135,7 +165,6 @@ public class User implements UserDetails {
 		this.password = password;
 	}
 
-	
 	public List<Project> getProjects() {
 		return projects;
 	}
@@ -143,67 +172,51 @@ public class User implements UserDetails {
 	public void setProjects(List<Project> projects) {
 		this.projects = projects;
 	}
-	
-	//convenience methods for establishing bi directional relationship
-	
-	public void addProject(Project project) {
-		this.projects.add(project);
-		project.setUser(this);
-	}
-	
-	public void removeProject(Project project) {
-		this.projects.remove(project);
-		project.setUser(null);
-	}
-	
+
 	/*
 	 * UserDetails interface mehtods
 	 */
-	
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getPassword() {
-		// TODO Auto-generated method stub
 		return this.password;
 	}
 
 	@Override
 	public String getUsername() {
-		// TODO Auto-generated method stub
 		return this.username;
 	}
 
 	@Override
 	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", username=" + username + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", password=" + password + ", confirmPassword=" + confirmPassword + ", createdAt=" + createdAt
+				+ ", updatedAt=" + updatedAt + ", projects=" + projects + "]";
 	}
 
 }

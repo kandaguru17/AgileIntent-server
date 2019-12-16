@@ -65,9 +65,8 @@ public class UserController {
 		ResponseEntity<Map<String, String>> error = errorMapService.mapErrors(result);
 		if (error != null)
 			return error;
-
+		
 		User newUser = userService.save(user);
-
 		return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
 
 	}
