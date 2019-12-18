@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.app.agileintent.domain.AddUser;
+import io.app.agileintent.domain.AddUserGroup;
 import io.app.agileintent.domain.Project;
 import io.app.agileintent.domain.User;
 import io.app.agileintent.service.ErrorMapService;
@@ -35,7 +35,7 @@ public class ProjectMemberContoller {
 	private ProjectMemberService projectMemberService;
 	
 	@PostMapping({"/{projectIdentifier}"})
-	public ResponseEntity<?> addProjectMembers(@Validated({AddUser.class}) @RequestBody User user,BindingResult result ,@PathVariable String projectIdentifier,Principal principal){
+	public ResponseEntity<?> addProjectMembers(@Validated({AddUserGroup.class}) @RequestBody User user,BindingResult result ,@PathVariable String projectIdentifier,Principal principal){
 		
 		ResponseEntity<Map<String,String>> error=errorMapService.mapErrors(result);
 		if(error!=null)

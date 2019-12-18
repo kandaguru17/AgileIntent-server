@@ -18,27 +18,34 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 		return new ResponseEntity<ProjectIdExceptionMessage>(projectIdExceptionRepsonse, HttpStatus.BAD_REQUEST);
 	}
 
-	
 	@ExceptionHandler
-	public final ResponseEntity<?> handleBacklogNotFoundException(ProjectNotFoundException ex,WebRequest req){
-		ProjectNotFoundExceptionMessage backlogExceptionMessage= new ProjectNotFoundExceptionMessage(ex.getBacklogExceptionMessage());
-		return new ResponseEntity<ProjectNotFoundExceptionMessage>(backlogExceptionMessage,HttpStatus.BAD_REQUEST);
-		
+	public final ResponseEntity<?> handleBacklogNotFoundException(ProjectNotFoundException ex, WebRequest req) {
+		ProjectNotFoundExceptionMessage backlogExceptionMessage = new ProjectNotFoundExceptionMessage(
+				ex.getBacklogExceptionMessage());
+		return new ResponseEntity<ProjectNotFoundExceptionMessage>(backlogExceptionMessage, HttpStatus.BAD_REQUEST);
+
 	}
-	
+
 	@ExceptionHandler
-	public final ResponseEntity<?> handleUserAlreadyExistException(UserProfileException ex, WebRequest req){
-		UserProfileExceptionMessage userExceptionMessage=new UserProfileExceptionMessage(ex.getUserExecetpionMessage());
-		return new ResponseEntity<UserProfileExceptionMessage>(userExceptionMessage,HttpStatus.BAD_REQUEST);
-		
+	public final ResponseEntity<?> handleUserAlreadyExistException(UserProfileException ex, WebRequest req) {
+		UserProfileExceptionMessage userExceptionMessage = new UserProfileExceptionMessage(
+				ex.getUserExecetpionMessage());
+		return new ResponseEntity<UserProfileExceptionMessage>(userExceptionMessage, HttpStatus.BAD_REQUEST);
+
 	}
-	
-	
+
 	@ExceptionHandler
-	public final ResponseEntity<?> handleCommentException(CommentException ex, WebRequest req){
-		CommentExceptionMessage commentExceptionMessage=new CommentExceptionMessage(ex.getMessage());
-		return new ResponseEntity<CommentExceptionMessage>(commentExceptionMessage,HttpStatus.BAD_REQUEST);
-		
+	public final ResponseEntity<?> handleCommentException(CommentException ex, WebRequest req) {
+		CommentExceptionMessage commentExceptionMessage = new CommentExceptionMessage(ex.getMessage());
+		return new ResponseEntity<CommentExceptionMessage>(commentExceptionMessage, HttpStatus.BAD_REQUEST);
+
 	}
-	
+
+	@ExceptionHandler
+	public final ResponseEntity<?> handleAttachmentException(AttachmentException ex, WebRequest req) {
+		AttachmentExceptionMessage commentExceptionMessage = new AttachmentExceptionMessage(ex.getMessage());
+		return new ResponseEntity<AttachmentExceptionMessage>(commentExceptionMessage, HttpStatus.BAD_REQUEST);
+
+	}
+
 }

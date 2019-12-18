@@ -24,6 +24,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import io.app.agileintent.validators.ValidPassword;
 
 @Entity
@@ -40,7 +43,7 @@ public class User implements UserDetails {
 
 	@NotBlank(message = "User name cannot be empty")
 	@Column(unique = true)
-	@Email(message = "User name must be a Email Id", groups = { AddUser.class })
+	@Email(message = "User name must be a Email Id", groups = { AddUserGroup.class })
 	private String username;
 
 	@NotBlank(message = "First Name is mandatory")
@@ -50,11 +53,11 @@ public class User implements UserDetails {
 	private String lastName;
 
 	@ValidPassword
-	@JsonIgnore
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private String password;
 
 	@Transient
-	@JsonIgnore
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private String confirmPassword;
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")

@@ -73,8 +73,9 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 			Principal principal) {
 
 		projectService.getProjectByProjectIdentifier(projectIdentifier, principal);
-
 		ProjectTask foundProjectTask = projectTaskRepository.findByProjectTaskSequence(projectTaskSequence);
+		
+		
 		if (foundProjectTask == null)
 			throw new ProjectNotFoundException("project task not found");
 

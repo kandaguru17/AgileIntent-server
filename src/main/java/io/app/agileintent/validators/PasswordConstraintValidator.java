@@ -23,8 +23,7 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
 
 		if(password==null)
 			throw new UserProfileException("Password Cannot be null");
-		
-		
+				
 		PasswordValidator validator = new PasswordValidator(Arrays.asList(
 				// at least 8 characters
 				//new LengthRule(8, 15),

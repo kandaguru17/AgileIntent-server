@@ -1,5 +1,5 @@
 package io.app.agileintent.domain;
 
-public interface AddUser {
+public interface AddUserGroup {
 
 }

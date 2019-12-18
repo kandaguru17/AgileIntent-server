@@ -34,62 +34,65 @@ public class ProjectTask {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(updatable = false,unique = true)
+	@Column(updatable = false, unique = true)
 	private String projectTaskSequence;
-	
+
 	@NotEmpty(message = "Please include a project summary")
 	private String summary;
 
 	@Lob
 	private String acceptanceCriteria;
-	
+
 	@NotEmpty(message = "status of the Project Task is required")
 	private String status;
-	
+
 	@NotNull(message = "Priority of the Project Task is required")
 	@Min(1)
 	@Max(4)
 	private Integer priority;
-	
+
 	@Column(updatable = false)
 	private String projectIdentifier;
-	
-	@JsonFormat(pattern="yyyy-MM-dd",locale="en_NZ",timezone = "Pacific/Auckland")
+
+	@JsonFormat(pattern = "yyyy-MM-dd", locale = "en_NZ", timezone = "Pacific/Auckland")
 	private Date dueDate;
-	
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",locale="en_NZ",timezone = "Pacific/Auckland")
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")
 	@Column(updatable = false)
 	private Date createdAt;
-	
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",locale="en_NZ",timezone = "Pacific/Auckland")
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")
 	private Date updatedAt;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "backlog_id",updatable = false,nullable=false)
+	@JoinColumn(name = "backlog_id", updatable = false, nullable = false)
 	@JsonIgnore
 	private Backlog backlog;
-	
-	@NotNull
-	@ValidIssueType(enumClass = IssueType.class,ignoreCase = true)
-	private String issueType;
-	
-	@OneToMany(cascade = CascadeType.ALL,mappedBy = "projectTask",orphanRemoval = true)
-	@JsonIgnore
-	private List<Comment> comments=new ArrayList<Comment>();
 
-	public ProjectTask() {}
+	@NotNull
+	@ValidIssueType(enumClass = IssueType.class, ignoreCase = true)
+	private String issueType;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "projectTask", orphanRemoval = true)
+	@JsonIgnore
+	private List<Comment> comments = new ArrayList<Comment>();
+
+	@OneToMany(mappedBy = "projectTask", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Attachment> attachments = new ArrayList<>();
+
+	public ProjectTask() {
+	}
 
 	@PrePersist
 	public void onCreate() {
-		this.createdAt=new Date();		
-	}
-	
-	@PreUpdate
-	public void onUpdate() {
-		this.updatedAt=new Date();
+		this.createdAt = new Date();
 	}
 
-	
+	@PreUpdate
+	public void onUpdate() {
+		this.updatedAt = new Date();
+	}
+
 	/*
 	 * Bi directional relationship between comment and project Task
 	 */
@@ -97,11 +100,23 @@ public class ProjectTask {
 		this.comments.add(comment);
 		comment.setProjectTask(this);
 	}
-	
-	
+
 	public void removeComment(Comment comment) {
 		this.comments.remove(comment);
 		comment.setProjectTask(null);
+	}
+
+	/*
+	 * / projecttask-attachment convinience methods
+	 */
+	public void addAttachment(Attachment attachment) {
+		attachment.setProjectTask(this);
+		this.attachments.add(attachment);
+	}
+
+	public void removeAttachment(Attachment attachment) {
+		this.attachments.remove(attachment);
+		attachment.setProjectTask(null);
 	}
 
 	public Long getId() {
@@ -191,7 +206,7 @@ public class ProjectTask {
 	public void setBacklog(Backlog backlog) {
 		this.backlog = backlog;
 	}
-	
+
 	public String getIssueType() {
 		return issueType;
 	}
@@ -199,13 +214,21 @@ public class ProjectTask {
 	public void setIssueType(String issueType) {
 		this.issueType = issueType;
 	}
-	
+
 	public List<Comment> getComments() {
 		return comments;
 	}
 
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
+	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 
 	@Override
@@ -216,7 +239,4 @@ public class ProjectTask {
 				+ ", updatedAt=" + updatedAt + ", backlog=" + backlog + "]";
 	}
 
-
-	
-	
 }
