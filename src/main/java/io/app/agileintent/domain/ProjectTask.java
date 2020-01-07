@@ -41,6 +41,7 @@ public class ProjectTask {
 	private String summary;
 
 	@Lob
+	@NotEmpty(message = "Please include acceptance criteria")
 	private String acceptanceCriteria;
 
 	@NotEmpty(message = "status of the Project Task is required")
@@ -55,6 +56,7 @@ public class ProjectTask {
 	private String projectIdentifier;
 
 	@JsonFormat(pattern = "yyyy-MM-dd", locale = "en_NZ", timezone = "Pacific/Auckland")
+	@NotNull
 	private Date dueDate;
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")
@@ -79,10 +81,12 @@ public class ProjectTask {
 
 	@OneToMany(mappedBy = "projectTask", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Attachment> attachments = new ArrayList<>();
-
+	
+	
 	public ProjectTask() {
 	}
 
+	
 	@PrePersist
 	public void onCreate() {
 		this.createdAt = new Date();

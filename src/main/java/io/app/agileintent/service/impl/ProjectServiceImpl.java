@@ -10,6 +10,7 @@ import io.app.agileintent.domain.Backlog;
 import io.app.agileintent.domain.Project;
 import io.app.agileintent.domain.User;
 import io.app.agileintent.exceptions.ProjectIdException;
+import io.app.agileintent.exceptions.UserProfileException;
 import io.app.agileintent.repositories.ProjectRepository;
 import io.app.agileintent.repositories.UserRepository;
 import io.app.agileintent.service.ProjectService;
@@ -75,6 +76,9 @@ public class ProjectServiceImpl implements ProjectService {
 		project.setId(foundProject.getId());
 		project.addBackLog(foundProject.getBacklog());
 
+		//refactoring required
+		
+		
 		/*
 		 * made the column (updatable=false)
 		 * project.setCreatedAt(foundProject.getCreatedAt());
@@ -88,6 +92,8 @@ public class ProjectServiceImpl implements ProjectService {
 	public List<Project> getAllProjects(Principal principal) {
 		
 		User user=userRepository.findByUsername(principal.getName());
+		if(user==null)
+			throw new UserProfileException("No such user found");
 		
 		return projectRepository.findAllProjects(user.getId());
 	}

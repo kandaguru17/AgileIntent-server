@@ -1,6 +1,7 @@
 package io.app.agileintent.service;
 
-import javax.validation.Valid;
+import java.security.Principal;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,7 @@ import io.app.agileintent.domain.User;
 @Service
 public interface UserService {
 
-	User save(@Valid User user);
+	User save(User user);
+	List<User> getAllUsers(Principal principal);
 	
 }

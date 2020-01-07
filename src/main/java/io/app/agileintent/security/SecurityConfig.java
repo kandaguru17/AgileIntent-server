@@ -60,7 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/**/*.html",
                 "/**/*.css",
                 "/**/*.js").permitAll()
-		.antMatchers(USER_ROUTES).permitAll()
+		.antMatchers(AUTH_USER_ROUTE).permitAll()
+		.antMatchers(REGISTER_USER_ROUTE).permitAll()
 		.antMatchers(H2_ROUTE).permitAll()
 		.anyRequest().authenticated();
 		

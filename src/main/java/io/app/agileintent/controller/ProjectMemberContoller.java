@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,11 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.app.agileintent.domain.AddUserGroup;
-import io.app.agileintent.domain.Project;
 import io.app.agileintent.domain.User;
 import io.app.agileintent.service.ErrorMapService;
 import io.app.agileintent.service.ProjectMemberService;
-
 
 @RestController
 @RequestMapping("/api/members")
@@ -33,21 +32,36 @@ public class ProjectMemberContoller {
 	private ErrorMapService errorMapService;
 	@Autowired
 	private ProjectMemberService projectMemberService;
-	
-	@PostMapping({"/{projectIdentifier}"})
-	public ResponseEntity<?> addProjectMembers(@Validated({AddUserGroup.class}) @RequestBody User user,BindingResult result ,@PathVariable String projectIdentifier,Principal principal){
+
+	@PostMapping({ "/{projectIdentifier}" })
+	public ResponseEntity<?> addProjectMembers(@Validated({ AddUserGroup.class }) @RequestBody User user,
+			BindingResult result, @PathVariable String projectIdentifier, Principal principal) {
+
+		ResponseEntity<Map<String, String>> error = errorMapService.mapErrors(result);
+		if (error != null)
+			return error;
+
+		User addedUser = projectMemberService.addUserToProject(projectIdentifier, user.getUsername(), principal);
+		return new ResponseEntity<User>(addedUser, HttpStatus.OK);
+	}
+
+	@DeleteMapping({ "/{projectIdentifier}" })
+	public ResponseEntity<?> removeProjectMember(@Validated({ AddUserGroup.class }) @RequestBody User user,
+			BindingResult result, @PathVariable String projectIdentifier,Principal principal) {
 		
-		ResponseEntity<Map<String,String>> error=errorMapService.mapErrors(result);
+		ResponseEntity<Map<String, String>> error=errorMapService.mapErrors(result);
 		if(error!=null)
 			return error;
 		
-		Project project=projectMemberService.addUserToProject(projectIdentifier,user.getUsername(), principal);
-		return new ResponseEntity<Project>(project,HttpStatus.OK);
+		User removedUser=projectMemberService.removeUserfromProject(projectIdentifier, user.getUsername(), principal);
+		return new ResponseEntity<User>(removedUser,HttpStatus.OK);
+		
+
 	}
 
-	@GetMapping({"/{projectIdentifier}"})
-	public ResponseEntity<?> listProjectMembers(@PathVariable String projectIdentifier,Principal principal){
-		List<User> projectUsers=projectMemberService.getProjectUsers(projectIdentifier, principal);
-		return new ResponseEntity<List<User>>(projectUsers,HttpStatus.OK);
+	@GetMapping({ "/{projectIdentifier}" })
+	public ResponseEntity<?> listProjectMembers(@PathVariable String projectIdentifier, Principal principal) {
+		List<User> projectUsers = projectMemberService.getProjectUsers(projectIdentifier, principal);
+		return new ResponseEntity<List<User>>(projectUsers, HttpStatus.OK);
 	}
 }

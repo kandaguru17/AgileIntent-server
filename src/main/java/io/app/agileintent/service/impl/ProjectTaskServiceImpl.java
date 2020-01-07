@@ -92,23 +92,35 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
 		ProjectTask foundProjectTask = getProjectTaskByProjectTaskSequence(projectIdentifier, projectTaskSequence,
 				principal);
-		projectTask.setId(foundProjectTask.getId());
-
-		if (projectTask.getStatus() == null || projectTask.getStatus().trim() == "")
-			projectTask.setStatus("TO_DO");
-
-		if (projectTask.getPriority() == null || projectTask.getPriority() == 0)
-			projectTask.setPriority(4);
-
-		projectTask.setIssueType(projectTask.getIssueType().toUpperCase());
-
+		
+		foundProjectTask.setAcceptanceCriteria(projectTask.getAcceptanceCriteria());
+		foundProjectTask.setSummary(projectTask.getSummary());
+		foundProjectTask.setIssueType(projectTask.getIssueType());
+		foundProjectTask.setStatus(projectTask.getStatus());
+		foundProjectTask.setPriority(projectTask.getPriority());
+		foundProjectTask.setDueDate(projectTask.getDueDate());
+		
+		return projectTaskRepository.save(foundProjectTask);
+		
+//		projectTask.setId(foundProjectTask.getId());
+//
+//		if (projectTask.getStatus() == null || projectTask.getStatus().trim() == "")
+//			projectTask.setStatus("TO_DO");
+//
+//		if (projectTask.getPriority() == null || projectTask.getPriority() == 0)
+//			projectTask.setPriority(4);
+//
+//		projectTask.setIssueType(projectTask.getIssueType().toUpperCase());
+//		projectTask.setComments(foundProjectTask.getComments());
+	
+		
 //		have set the column updatable =false
 //		projectTask.setBacklog(foundProjectTask.getBacklog());
 //		projectTask.setCreatedAt(foundProjectTask.getCreatedAt());
 //		projectTask.setProjectIdentifier(foundProjectTask.getProjectIdentifier());
 //		projectTask.setProjectTaskSequence(foundProjectTask.getProjectTaskSequence());
 
-		return projectTaskRepository.save(projectTask);
+		
 	}
 
 	@Override

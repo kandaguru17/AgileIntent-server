@@ -92,16 +92,6 @@ public class Attachment {
 		this.attachmentSize = attachmentSize;
 	}
 
-////	attachment-project task convenience method
-//	public void addProjectTask(ProjectTask projectTask) {
-//		this.setProjectTask(projectTask);
-//		projectTask.getAttachments().add(this);
-//	}
-//
-//	public void removeProjectTask(ProjectTask projectTask) {
-//		this.setProjectTask(null);
-//		projectTask.getAttachments().remove(this);
-//	}
 
 	@Override
 	public String toString() {

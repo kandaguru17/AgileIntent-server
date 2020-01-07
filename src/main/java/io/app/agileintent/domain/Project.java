@@ -86,11 +86,15 @@ public class Project {
 		backlog.setProject(this);
 	}
 	
-	
-	public void addUser(User user) {
-		this.getUsers().add(user);
-		user.getProjects().add(this);
-	}
+//	public void addUser(User user) {
+//		this.getUsers().add(user);
+//		user.getProjects().add(this);
+//	}
+//	
+//	public void removeUser(User user) {
+//		this.getUsers().remove(user);
+//		user.removeProject(this);
+//	}
 
 	public Long getId() {
 		return id;
@@ -163,14 +167,6 @@ public class Project {
 	public void setBacklog(Backlog backlog) {
 		this.backlog = backlog;
 	}
-
-//	public User getUser() {
-//		return user;
-//	}
-//
-//	public void setUser(User user) {
-//		this.user = user;
-//	}
 
 	public List<User> getUsers() {
 		return users;

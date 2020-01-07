@@ -36,7 +36,7 @@ public class AttachmentServiceImpl implements AttachmentService {
 		try {
 			if (fileName.contains(".."))
 				throw new AttachmentException("File contains invalid characters");
-
+			
 			Attachment attachment = new Attachment(fileName, file.getContentType(), file.getBytes(), file.getSize());
 			projectTask.addAttachment(attachment);
 			return attachmentRepoistory.save(attachment);

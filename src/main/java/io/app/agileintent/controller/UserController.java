@@ -1,6 +1,10 @@
 package io.app.agileintent.controller;
 
+import static io.app.agileintent.security.SecurityConstants.JWT_PREFIX;
+
+import java.security.Principal;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -13,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +29,6 @@ import io.app.agileintent.security.AuthenticationResponse;
 import io.app.agileintent.security.JwtTokenProvider;
 import io.app.agileintent.service.ErrorMapService;
 import io.app.agileintent.service.UserService;
-import static io.app.agileintent.security.SecurityConstants.*;
 
 @RestController
 @CrossOrigin
@@ -69,6 +73,13 @@ public class UserController {
 		User newUser = userService.save(user);
 		return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
 
+	}
+	
+	
+	@GetMapping({"/"})
+	public ResponseEntity<?> getAllUsers(Principal principal){
+		List<User> users=userService.getAllUsers(principal);
+		return new ResponseEntity<List<User>>(users,HttpStatus.OK);
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,8 +21,10 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -61,6 +64,7 @@ public class User implements UserDetails {
 	private String confirmPassword;
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")
+	@Column(updatable = false)
 	private Date createdAt;
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")
 	private Date updatedAt;
@@ -71,7 +75,7 @@ public class User implements UserDetails {
 	@JsonIgnore
 	private List<Project> projects = new ArrayList<Project>();
 	
-	@OneToMany(cascade = CascadeType.ALL,mappedBy = "user")
+	@OneToMany(cascade = CascadeType.ALL,mappedBy = "user",orphanRemoval = true)
 	@JsonIgnore
 	private List<Comment> comments= new ArrayList<>();
 
@@ -79,6 +83,8 @@ public class User implements UserDetails {
 	public void onCreate() {
 		this.createdAt = new Date();
 	}
+
+	
 
 	@PreUpdate
 	public void onUpdate() {
@@ -112,6 +118,7 @@ public class User implements UserDetails {
 		comment.setUser(null);
 	}
 
+		
 	public Long getId() {
 		return id;
 	}
@@ -175,6 +182,15 @@ public class User implements UserDetails {
 	public void setProjects(List<Project> projects) {
 		this.projects = projects;
 	}
+	
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+
 
 	/*
 	 * UserDetails interface mehtods
