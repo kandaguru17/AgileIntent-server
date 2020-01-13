@@ -23,7 +23,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	public Project addProject(Project project, Principal principal) throws ProjectIdException {
 
 		String projectIdentifier = project.getProjectIdentifier().toUpperCase();
@@ -60,9 +60,11 @@ public class ProjectServiceImpl implements ProjectService {
 		if (project == null)
 			throw new ProjectIdException("Project Id " + projectIdentifier + " does not exist");
 
-		User user=userRepository.findByUsername(principal.getName());
-		
-		boolean isValidUser=project.getUsers().contains(user);
+		User user = userRepository.findByUsername(principal.getName());
+		if (user == null)
+			throw new UserProfileException("No such user");
+
+		boolean isValidUser = project.getUsers().contains(user);
 		if (!isValidUser) {
 			throw new ProjectIdException("Not Authorised to access Project with Id " + projectIdentifier);
 		}
@@ -73,28 +75,36 @@ public class ProjectServiceImpl implements ProjectService {
 	public Project updateProject(Project project, String projectIdentifier, Principal principal) {
 
 		Project foundProject = getProjectByProjectIdentifier(projectIdentifier, principal);
-		project.setId(foundProject.getId());
-		project.addBackLog(foundProject.getBacklog());
+//		project.setId(foundProject.getId());
+//		project.addBackLog(foundProject.getBacklog());
 
-		//refactoring required
-		
-		
+		foundProject.setDescription(project.getDescription());
+		foundProject.setProjectName(project.getProjectName());
+
+		if (project.getStartDate() != null)
+			foundProject.setStartDate(project.getStartDate());
+		if (project.getEndDate() != null)
+			foundProject.setEndDate(project.getEndDate());
+
+		// refactoring required
+
 		/*
 		 * made the column (updatable=false)
 		 * project.setCreatedAt(foundProject.getCreatedAt());
 		 * project.setReportingPerson(foundProject.getReportingPerson());
 		 * project.setUser(foundProject.getUser());
 		 */
-		return projectRepository.save(project);
+
+		return projectRepository.save(foundProject);
 
 	}
 
 	public List<Project> getAllProjects(Principal principal) {
-		
-		User user=userRepository.findByUsername(principal.getName());
-		if(user==null)
+
+		User user = userRepository.findByUsername(principal.getName());
+		if (user == null)
 			throw new UserProfileException("No such user found");
-		
+
 		return projectRepository.findAllProjects(user.getId());
 	}
 

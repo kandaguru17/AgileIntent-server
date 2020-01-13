@@ -74,17 +74,19 @@ public class User implements UserDetails {
 			@JoinColumn(name = "project_id") })
 	@JsonIgnore
 	private List<Project> projects = new ArrayList<Project>();
-	
-	@OneToMany(cascade = CascadeType.ALL,mappedBy = "user",orphanRemoval = true)
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
 	@JsonIgnore
-	private List<Comment> comments= new ArrayList<>();
+	private List<Comment> comments = new ArrayList<>();
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<ProjectTask> projectTasks = new ArrayList<>();
 
 	@PrePersist
 	public void onCreate() {
 		this.createdAt = new Date();
 	}
-
-	
 
 	@PreUpdate
 	public void onUpdate() {
@@ -99,26 +101,34 @@ public class User implements UserDetails {
 	public void addProject(Project project) {
 		this.projects.add(project);
 		project.getUsers().add(this);
-		// project.setUser(this);
 	}
 
 	public void removeProject(Project project) {
 		this.projects.remove(project);
 		project.getUsers().remove(this);
-		// project.setUsers(null);
 	}
-	
+
 	public void addComment(Comment comment) {
 		this.comments.add(comment);
 		comment.setUser(this);
 	}
-	
+
 	public void removeComment(Comment comment) {
 		this.comments.remove(comment);
 		comment.setUser(null);
 	}
 
-		
+	public void assignProjectTask(ProjectTask projectTask) {
+		this.projectTasks.add(projectTask);
+		projectTask.setUser(this);
+	}
+	
+	public void unAssignProjectTask(ProjectTask projectTask) {
+		this.projectTasks.remove(projectTask);
+		projectTask.setUser(null);
+	}
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -182,7 +192,7 @@ public class User implements UserDetails {
 	public void setProjects(List<Project> projects) {
 		this.projects = projects;
 	}
-	
+
 	public List<Comment> getComments() {
 		return comments;
 	}
@@ -191,6 +201,13 @@ public class User implements UserDetails {
 		this.comments = comments;
 	}
 
+	public List<ProjectTask> getProjectTasks() {
+		return projectTasks;
+	}
+
+	public void setProjectTasks(List<ProjectTask> projectTasks) {
+		this.projectTasks = projectTasks;
+	}
 
 	/*
 	 * UserDetails interface mehtods

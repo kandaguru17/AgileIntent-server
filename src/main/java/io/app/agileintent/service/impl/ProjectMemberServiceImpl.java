@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.app.agileintent.domain.Project;
+import io.app.agileintent.domain.ProjectTask;
 import io.app.agileintent.domain.User;
 import io.app.agileintent.exceptions.UserProfileException;
 import io.app.agileintent.repositories.UserRepository;
 import io.app.agileintent.service.ProjectMemberService;
 import io.app.agileintent.service.ProjectService;
+import io.app.agileintent.service.ProjectTaskService;
 
 @Service
 public class ProjectMemberServiceImpl implements ProjectMemberService {
@@ -21,6 +23,10 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 
 	@Autowired
 	private ProjectService projectService;
+	
+	
+	@Autowired
+	private ProjectTaskService projectTaskService;
 
 	public User addUserToProject(String projectIdentifier, String username, Principal principal) {
 
@@ -70,4 +76,28 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 		return userRepository.save(user);
 
 	}
+
+
+	@Override
+	public User assignUserToProjectTask(String projectIdentifier, String projectTaskSequence,String username, Principal principal) {
+		
+		ProjectTask projectTask=projectTaskService.getProjectTaskByProjectTaskSequence(projectIdentifier, projectTaskSequence, principal);
+		User user=userRepository.findByUsername(username);
+		
+		if(user==null)
+			throw new UserProfileException("No such user");
+		
+		List<User> users=getProjectUsers(projectIdentifier, principal);
+		if(!users.contains(user))
+			throw new UserProfileException("Not a member of this project,contact Reporting person");
+		
+		user.assignProjectTask(projectTask);
+		userRepository.save(user);
+		
+		return userRepository.save(user);
+	}
+
+
+
+
 }

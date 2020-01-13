@@ -89,6 +89,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<finalName>agile-intent-api</finalName>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import io.app.agileintent.domain.User;
 import io.app.agileintent.exceptions.UserProfileException;
 import io.app.agileintent.repositories.UserRepository;
-import io.app.agileintent.service.ProjectService;
 import io.app.agileintent.service.UserService;
 
 @Service
@@ -21,6 +20,7 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
 
 	@Override
 	public User save(User user) {
@@ -37,6 +37,9 @@ public class UserServiceImpl implements UserService {
 
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 		user.setConfirmPassword(null);
+		user.setFirstName(user.getFirstName().substring(0,1).toUpperCase() +user.getFirstName().substring(1));
+		user.setLastName(user.getLastName().substring(0,1).toUpperCase() +user.getLastName().substring(1));
+		
 
 		return userRepository.save(user);
 	}
@@ -50,5 +53,7 @@ public class UserServiceImpl implements UserService {
 
 		return userRepository.findAll();
 	}
+
+
 
 }

@@ -47,15 +47,14 @@ public class ProjectMemberContoller {
 
 	@DeleteMapping({ "/{projectIdentifier}" })
 	public ResponseEntity<?> removeProjectMember(@Validated({ AddUserGroup.class }) @RequestBody User user,
-			BindingResult result, @PathVariable String projectIdentifier,Principal principal) {
-		
-		ResponseEntity<Map<String, String>> error=errorMapService.mapErrors(result);
-		if(error!=null)
+			BindingResult result, @PathVariable String projectIdentifier, Principal principal) {
+
+		ResponseEntity<Map<String, String>> error = errorMapService.mapErrors(result);
+		if (error != null)
 			return error;
-		
-		User removedUser=projectMemberService.removeUserfromProject(projectIdentifier, user.getUsername(), principal);
-		return new ResponseEntity<User>(removedUser,HttpStatus.OK);
-		
+
+		User removedUser = projectMemberService.removeUserfromProject(projectIdentifier, user.getUsername(), principal);
+		return new ResponseEntity<User>(removedUser, HttpStatus.OK);
 
 	}
 
@@ -64,4 +63,13 @@ public class ProjectMemberContoller {
 		List<User> projectUsers = projectMemberService.getProjectUsers(projectIdentifier, principal);
 		return new ResponseEntity<List<User>>(projectUsers, HttpStatus.OK);
 	}
+
+	@PostMapping("assign/{projectIdentifier}/{projectTaskSequence}")
+	public ResponseEntity<?> assignUserToProjectTask(@Validated(AddUserGroup.class) @RequestBody User user,
+			@PathVariable String projectIdentifier, @PathVariable String projectTaskSequence,Principal principal) {
+
+		User assignedUser=projectMemberService.assignUserToProjectTask(projectIdentifier, projectTaskSequence, user.getUsername(), principal);
+		return new ResponseEntity<User>(assignedUser,HttpStatus.OK);
+	}
+
 }

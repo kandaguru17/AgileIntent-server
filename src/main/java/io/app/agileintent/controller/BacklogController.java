@@ -87,5 +87,14 @@ public class BacklogController {
 		projectTaskService.deleteProjectTask(projectIdentifier, projectTaskSequence,principal);
 		return new ResponseEntity<String>("Project task deleted successfully", HttpStatus.OK);
 	}
+	
+	
+	@GetMapping({"/currentUser"})
+	public ResponseEntity<?> ListAssignedProjectTasks(Principal principal){
+		List<ProjectTask> projectTasks=projectTaskService.getAssignedProjectTasks(principal);
+		return new ResponseEntity<List<ProjectTask>>(projectTasks,HttpStatus.OK);
+	
+	}
+
 
 }

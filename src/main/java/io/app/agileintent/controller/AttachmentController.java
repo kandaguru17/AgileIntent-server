@@ -60,7 +60,6 @@ public class AttachmentController {
 		return Arrays.asList(files).stream()
 				.map(file -> uploadAttachment(file, projectIdentifier, projectTaskSequence, principal))
 				.collect(Collectors.toList());
-
 	}
 
 	@GetMapping({ "download/{projectIdentifier}/{projectTaskSequence}/{fileId}" })

@@ -20,4 +20,6 @@ public interface ProjectTaskService {
 
 	ProjectTask updateProjectTask(String projectIdentifier, String projectTaskSequence, ProjectTask updatedProjectTask,Principal principal);
 
+	List<ProjectTask> getAssignedProjectTasks(Principal principal);
+	
 }

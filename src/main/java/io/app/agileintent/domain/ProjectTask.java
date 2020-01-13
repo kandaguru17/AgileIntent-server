@@ -80,7 +80,13 @@ public class ProjectTask {
 	private List<Comment> comments = new ArrayList<Comment>();
 
 	@OneToMany(mappedBy = "projectTask", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
 	private List<Attachment> attachments = new ArrayList<>();
+	
+	
+	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	@JoinColumn(name="assigned_to",updatable = true,nullable = true)
+	private User user;
 	
 	
 	public ProjectTask() {
@@ -233,6 +239,14 @@ public class ProjectTask {
 
 	public void setAttachments(List<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	@Override

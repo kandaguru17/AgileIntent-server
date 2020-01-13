@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
 import io.app.agileintent.domain.Backlog;
 import io.app.agileintent.domain.Project;
 import io.app.agileintent.domain.ProjectTask;
+import io.app.agileintent.domain.User;
 import io.app.agileintent.exceptions.ProjectNotFoundException;
+import io.app.agileintent.exceptions.UserProfileException;
 import io.app.agileintent.repositories.ProjectTaskRepository;
+import io.app.agileintent.repositories.UserRepository;
 import io.app.agileintent.service.ProjectService;
 import io.app.agileintent.service.ProjectTaskService;
 
@@ -22,6 +25,9 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
 	@Autowired
 	private ProjectService projectService;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	@Override
 	public ProjectTask addProjectTaskToBacklog(String projectIdentifier, ProjectTask projectTask, Principal principal) {
@@ -74,8 +80,7 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
 		projectService.getProjectByProjectIdentifier(projectIdentifier, principal);
 		ProjectTask foundProjectTask = projectTaskRepository.findByProjectTaskSequence(projectTaskSequence);
-		
-		
+
 		if (foundProjectTask == null)
 			throw new ProjectNotFoundException("project task not found");
 
@@ -92,16 +97,16 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
 		ProjectTask foundProjectTask = getProjectTaskByProjectTaskSequence(projectIdentifier, projectTaskSequence,
 				principal);
-		
+
 		foundProjectTask.setAcceptanceCriteria(projectTask.getAcceptanceCriteria());
 		foundProjectTask.setSummary(projectTask.getSummary());
 		foundProjectTask.setIssueType(projectTask.getIssueType());
 		foundProjectTask.setStatus(projectTask.getStatus());
 		foundProjectTask.setPriority(projectTask.getPriority());
 		foundProjectTask.setDueDate(projectTask.getDueDate());
-		
+
 		return projectTaskRepository.save(foundProjectTask);
-		
+
 //		projectTask.setId(foundProjectTask.getId());
 //
 //		if (projectTask.getStatus() == null || projectTask.getStatus().trim() == "")
@@ -112,15 +117,13 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 //
 //		projectTask.setIssueType(projectTask.getIssueType().toUpperCase());
 //		projectTask.setComments(foundProjectTask.getComments());
-	
-		
+
 //		have set the column updatable =false
 //		projectTask.setBacklog(foundProjectTask.getBacklog());
 //		projectTask.setCreatedAt(foundProjectTask.getCreatedAt());
 //		projectTask.setProjectIdentifier(foundProjectTask.getProjectIdentifier());
 //		projectTask.setProjectTaskSequence(foundProjectTask.getProjectTaskSequence());
 
-		
 	}
 
 	@Override
@@ -134,5 +137,16 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 		backlog.removeProjectTask(foundProjectTask);
 
 		projectTaskRepository.delete(foundProjectTask);
+	}
+
+	@Override
+	public List<ProjectTask> getAssignedProjectTasks(Principal principal) {
+
+		User user = userRepository.findByUsername(principal.getName());
+		if (user == null)
+			throw new UserProfileException("No such user");
+
+		return projectTaskRepository.findAllByUserId(user.getId());
+
 	}
 }

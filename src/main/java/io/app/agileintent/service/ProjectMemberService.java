@@ -11,4 +11,5 @@ public interface ProjectMemberService {
 	public User removeUserfromProject(String projectIdentifier,String username,Principal principal);
 	public List<User> getProjectUsers(String projectIdentifier,Principal principal);
 
+	public User assignUserToProjectTask(String projectIdentifier,String projectTaskSequence,String username,Principal principal);
 }
