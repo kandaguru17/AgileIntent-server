@@ -1,0 +1,44 @@
+version: '3.7'
+services:
+  mysql-container:
+    image: mysql:8.0.17
+    ports:
+    - 3307:3306
+    restart: always
+    environment:
+    - MYSQL_ROOT_PASSWORD=Kbas663_01
+    - MYSQL_DATABASE=agile-intent
+    - MYSQL_USER=kbas663
+    volumes:
+    - mysql-db-volume:/var/lib/mysql-container
+    networks:
+    - agile-intent-network
+    
+  agile-intnet-api:
+    image: agile-intent-api:latest
+    restart: always
+    depends_on:
+    - mysql-container
+    environment:
+      RDS_HOSTNAME: mysql-container
+      RDS_PORT: 3306
+      RDS_USERNAME: kbas663
+      RDS_PASSWORD: Kbas663_01
+    ports:
+    - 8080:8080
+    networks:
+    - agile-intent-network
+    
+  agile-intent-frontend:
+    image: agile-intent-frontend:latest
+    ports:
+    - 4600:80
+    restart: always
+    depends_on:
+    - agile-intnet-api
+    networks:
+    - agile-intent-network
+volumes:
+  mysql-db-volume: 
+networks:
+  agile-intent-network: 

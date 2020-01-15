@@ -10,10 +10,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>io.myapp</groupId>
-	<artifactId>superintend</artifactId>
+	<artifactId>agile-intent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>SuperIntend</name>
-	<description>Pet App spring boot app</description>
+	<name>agile-intent</name>
+	<description>Project Management Application</description>
 
 	<properties>
 		<java.version>1.8</java.version>
