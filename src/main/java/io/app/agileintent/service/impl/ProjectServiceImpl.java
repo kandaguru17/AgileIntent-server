@@ -111,6 +111,10 @@ public class ProjectServiceImpl implements ProjectService {
 	public void deleteProjectByProjectIdentifier(String projectIdentifier, Principal principal) {
 		Project project = getProjectByProjectIdentifier(projectIdentifier, principal);
 		User user = userRepository.findByUsername(principal.getName());
+		
+		if(project.getReportingPerson().equals(principal.getName()))
+			throw new UserProfileException("Not authorized to delete the poject");
+		
 		// breaking the bi-directional link
 		user.removeProject(project);
 		projectRepository.delete(project);
