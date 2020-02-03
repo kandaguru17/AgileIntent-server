@@ -12,7 +12,7 @@ import io.app.agileintent.domain.Comment;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-	@Query(name = "Select * from comment where project_task_id=:projectTaskId;", nativeQuery = true)
+	@Query(value = "select * from comment  where project_task_id=:projectTaskId",nativeQuery = true)
 	public List<Comment> findCommentsByProjectTaskId(@Param("projectTaskId") Long projectTaskId);
 
 }

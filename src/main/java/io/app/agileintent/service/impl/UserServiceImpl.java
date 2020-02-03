@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
 	
 
 	@Override
-	public User save(User user) {
+	public User registerUser(User user) {
 
 		// username had to be unique
 		User foundUser = userRepository.findByUsername(user.getUsername());

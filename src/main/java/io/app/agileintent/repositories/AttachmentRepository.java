@@ -12,6 +12,6 @@ import io.app.agileintent.domain.Attachment;
 @Repository
 public interface AttachmentRepository extends JpaRepository<Attachment, Long> {
 
-	@Query(name = "select * from attachment where project_task_id=:projectTaskId",nativeQuery = true)
-	public List<Attachment> findAllByProjectTaskId(@Param("projectTaskId") Long projectTaskId);
+	@Query(value = "select * from attachment where project_task_id=:projectTaskId",nativeQuery = true)
+	public List<Attachment> fetchAttachments(@Param("projectTaskId") Long projectTaskId);
 }

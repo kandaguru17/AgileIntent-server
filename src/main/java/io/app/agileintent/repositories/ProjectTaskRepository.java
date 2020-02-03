@@ -16,6 +16,6 @@ public interface ProjectTaskRepository extends JpaRepository<ProjectTask, Long> 
 	public List<ProjectTask> findAllByProjectIdentifierOrderByPriority(String projectIdentifier);
 	public ProjectTask findByProjectTaskSequence(String projectTaskSequence);
 	
-	@Query(name = "select * from project_task where assigned_to=:userId",nativeQuery = true)
-	List<ProjectTask> findAllByUserId(@Param("userId") Long userId);
+	@Query(value = "select * from project_task where assigned_to=:userId and status <> :status",nativeQuery = true)
+	List<ProjectTask> findAssignedProjectTasks(@Param("userId") Long userId,@Param("status") String status);
 }

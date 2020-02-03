@@ -29,26 +29,26 @@ import io.app.agileintent.service.AttachmentService;
 
 @RestController
 @RequestMapping({ "/api/attachments" })
-@CrossOrigin(value = {"*"}, exposedHeaders = {"x-suggested-filename"})
+@CrossOrigin(value = { "*" }, exposedHeaders = { "x-suggested-filename" })
 public class AttachmentController {
 
 	@Autowired
 	private AttachmentService attachmentService;
 
+	
 	@PostMapping({ "/upload/{projectIdentifier}/{projectTaskSequence}" })
 	public AttachmentResponse uploadAttachment(@RequestParam("file") MultipartFile file,
 			@PathVariable String projectIdentifier, @PathVariable String projectTaskSequence, Principal principal) {
 
-	
 		Attachment uploadedFile = attachmentService.storeAttachment(file, projectIdentifier, projectTaskSequence,
 				principal);
-		
+
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attachments/download/")
 				.path(projectIdentifier + "/" + projectTaskSequence + "/" + uploadedFile.getId().toString())
 				.toUriString();
-		 
-		Long fileId=uploadedFile.getId();
-		return new AttachmentResponse(fileId,uploadedFile.getAttachmentName(), file.getContentType(), fileDownloadUri,
+
+		Long fileId = uploadedFile.getId();
+		return new AttachmentResponse(fileId, uploadedFile.getAttachmentName(), file.getContentType(), fileDownloadUri,
 				file.getSize());
 
 	}
@@ -83,11 +83,13 @@ public class AttachmentController {
 
 		// constructing the response object
 		for (int i = 0; i < attachments.size(); i++) {
-			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attachments/download/")
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+					.path("/api/attachments/download/")
 					.path(projectIdentifier + "/" + projectTaskSequence + "/" + attachments.get(i).getId().toString())
 					.toUriString();
-			AttachmentResponse attachmentResponse = new AttachmentResponse(attachments.get(i).getId(),attachments.get(i).getAttachmentName(),
-					attachments.get(i).getAttachmentType(), fileDownloadUri, attachments.get(i).getAttachmentSize());
+			AttachmentResponse attachmentResponse = new AttachmentResponse(attachments.get(i).getId(),
+					attachments.get(i).getAttachmentName(), attachments.get(i).getAttachmentType(), fileDownloadUri,
+					attachments.get(i).getAttachmentSize());
 			allAttachments.add(attachmentResponse);
 		}
 

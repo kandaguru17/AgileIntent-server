@@ -33,12 +33,13 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 		User user = userRepository.findByUsername(username);
 		Project project = projectService.getProjectByProjectIdentifier(projectIdentifier, principal);
 
-		if (user == null)
-			throw new UserProfileException("No such user registered.");
-
 		if (!principal.getName().equalsIgnoreCase(project.getReportingPerson())) {
 			throw new UserProfileException("Insufficient Priviledges, Contact your Reporting Person");
 		}
+		
+		if (user == null)
+			throw new UserProfileException("No such user registered.");
+
 
 		if (principal.getName().equalsIgnoreCase(username)
 				|| project.getUsers().stream().filter(o -> o.getUsername().equals(username)).findFirst().isPresent()) {
@@ -49,11 +50,19 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 		return userRepository.save(user);
 	}
 
+	@Override
 	public List<User> getProjectUsers(String projectIdentifier, Principal principal) {
 		Project project = projectService.getProjectByProjectIdentifier(projectIdentifier, principal);
 		return project.getUsers();
 	}
 
+	@Override
+	public List<User> getProjectUsersByFirstName(String projectIdentifier,String firstName, Principal principal){
+		Project project=projectService.getProjectByProjectIdentifier(projectIdentifier, principal);
+		return userRepository.findUsersByMatchingFirstName(project.getId(), firstName); 
+	}
+	
+	
 	@Override
 	public User removeUserfromProject(String projectIdentifier, String username, Principal principal) {
 
@@ -96,8 +105,6 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 		
 		return userRepository.save(user);
 	}
-
-
 
 
 }

@@ -83,6 +83,12 @@ public class User implements UserDetails {
 	@JsonIgnore
 	private List<ProjectTask> projectTasks = new ArrayList<>();
 
+	@OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.MERGE)
+	@JsonIgnore
+	private List<EmailConfirmation> emails = new ArrayList<>();
+
+	private boolean isEnabled;
+
 	@PrePersist
 	public void onCreate() {
 		this.createdAt = new Date();
@@ -122,13 +128,22 @@ public class User implements UserDetails {
 		this.projectTasks.add(projectTask);
 		projectTask.setUser(this);
 	}
-	
+
 	public void unAssignProjectTask(ProjectTask projectTask) {
 		this.projectTasks.remove(projectTask);
 		projectTask.setUser(null);
 	}
-	
-	
+
+	public void addEmail(EmailConfirmation email) {
+		email.setUser(this);
+		this.getEmails().add(email);
+	}
+
+	public void removeEmail(EmailConfirmation email) {
+		email.setUser(null);
+		this.getEmails().remove(email);
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -209,6 +224,18 @@ public class User implements UserDetails {
 		this.projectTasks = projectTasks;
 	}
 
+	public List<EmailConfirmation> getEmails() {
+		return emails;
+	}
+
+	public void setEmails(List<EmailConfirmation> emails) {
+		this.emails = emails;
+	}
+
+	public void setEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
+	}
+
 	/*
 	 * UserDetails interface mehtods
 	 */
@@ -245,7 +272,7 @@ public class User implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return this.isEnabled;
 	}
 
 	@Override

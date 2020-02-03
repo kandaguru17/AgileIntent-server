@@ -55,11 +55,6 @@ public class Project {
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
 	private Backlog backlog;
 
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name="user_id",updatable = false)
-//	@JsonIgnore
-//	private User user;
-
 	@ManyToMany(mappedBy = "projects")
 	@JsonIgnore
 	private List<User> users = new ArrayList<User>();
@@ -86,16 +81,6 @@ public class Project {
 		backlog.setProject(this);
 	}
 	
-//	public void addUser(User user) {
-//		this.getUsers().add(user);
-//		user.getProjects().add(this);
-//	}
-//	
-//	public void removeUser(User user) {
-//		this.getUsers().remove(user);
-//		user.removeProject(this);
-//	}
-
 	public Long getId() {
 		return id;
 	}

@@ -21,12 +21,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.app.agileintent.domain.User;
 import io.app.agileintent.security.AuthenticationRequest;
 import io.app.agileintent.security.AuthenticationResponse;
 import io.app.agileintent.security.JwtTokenProvider;
+import io.app.agileintent.service.EmailConfirmationService;
 import io.app.agileintent.service.ErrorMapService;
 import io.app.agileintent.service.UserService;
 
@@ -36,11 +38,13 @@ import io.app.agileintent.service.UserService;
 public class UserController {
 
 	@Autowired
-	UserService userService;
+	private UserService userService;
 	@Autowired
-	ErrorMapService errorMapService;
+	private ErrorMapService errorMapService;
 	@Autowired
-	JwtTokenProvider jwtProvider;
+	private JwtTokenProvider jwtProvider;
+	@Autowired
+	private EmailConfirmationService emailConfirmationService;
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
@@ -55,31 +59,37 @@ public class UserController {
 		Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
 				authenticationRequest.getUsername(), authenticationRequest.getPassword()));
 
-		String jwt=jwtProvider.generateToken(auth);
-		
-		AuthenticationResponse authenticationResponse= new AuthenticationResponse(true,JWT_PREFIX + jwt);
-		
-		return new ResponseEntity<AuthenticationResponse>(authenticationResponse,HttpStatus.OK);
+		String jwt = jwtProvider.generateToken(auth);
+
+		AuthenticationResponse authenticationResponse = new AuthenticationResponse(true, JWT_PREFIX + jwt);
+
+		return new ResponseEntity<AuthenticationResponse>(authenticationResponse, HttpStatus.OK);
 
 	}
 
 	@PostMapping({ "/register" })
-	public ResponseEntity<?> authenitcate(@Valid @RequestBody User user, BindingResult result) {
+	public ResponseEntity<?> authenitcate(@Valid @RequestBody User user, BindingResult result) throws InterruptedException {
 
 		ResponseEntity<Map<String, String>> error = errorMapService.mapErrors(result);
 		if (error != null)
 			return error;
-		
-		User newUser = userService.save(user);
+
+		User newUser = userService.registerUser(user);
+		emailConfirmationService.sendRegistrationEmail(newUser);
 		return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
 
 	}
 	
-	
-	@GetMapping({"/"})
-	public ResponseEntity<?> getAllUsers(Principal principal){
-		List<User> users=userService.getAllUsers(principal);
-		return new ResponseEntity<List<User>>(users,HttpStatus.OK);
+	@GetMapping({"/activate"})
+	public ResponseEntity<?> activateAccount(@RequestParam String token){
+		User activatedUser=emailConfirmationService.activateAccount(token);
+		return new ResponseEntity<User>(activatedUser,HttpStatus.OK);
+	}
+
+	@GetMapping({ "/" })
+	public ResponseEntity<?> getAllUsers(Principal principal) {
+		List<User> users = userService.getAllUsers(principal);
+		return new ResponseEntity<List<User>>(users, HttpStatus.OK);
 	}
 
 }

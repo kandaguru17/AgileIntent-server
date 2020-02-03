@@ -29,72 +29,72 @@ import io.app.agileintent.service.ProjectTaskService;
 @RequestMapping("/api/backlog")
 public class BacklogController {
 
-	@Autowired
-	private ProjectTaskService projectTaskService;
+    @Autowired
+    private ProjectTaskService projectTaskService;
 
-	@Autowired
-	private ErrorMapService errorMapService;
+    @Autowired
+    private ErrorMapService errorMapService;
 
-	@PostMapping({ "/{projectIdentifier}" })
-	public ResponseEntity<?> addNewProjectTaskToBacklog(@Valid @RequestBody ProjectTask projectTask,
-			BindingResult result, @PathVariable String projectIdentifier,Principal principal) {
+    @PostMapping({"/{projectIdentifier}"})
+    public ResponseEntity<?> addNewProjectTaskToBacklog(@Valid @RequestBody ProjectTask projectTask,
+                                                        BindingResult result, @PathVariable String projectIdentifier, Principal principal) {
 
-		ResponseEntity<Map<String, String>> errorMap = errorMapService.mapErrors(result);
-		if (errorMap != null)
-			return errorMap;
+        ResponseEntity<Map<String, String>> errorMap = errorMapService.mapErrors(result);
+        if (errorMap != null)
+            return errorMap;
 
-		ProjectTask savedProjectTask = projectTaskService.addProjectTaskToBacklog(projectIdentifier.toUpperCase(),
-				projectTask,principal);
-		return new ResponseEntity<ProjectTask>(savedProjectTask, HttpStatus.CREATED);
+        ProjectTask savedProjectTask = projectTaskService.addProjectTaskToBacklog(projectIdentifier.toUpperCase(),
+                projectTask, principal);
+        return new ResponseEntity<ProjectTask>(savedProjectTask, HttpStatus.CREATED);
 
-	}
+    }
 
-	@GetMapping({ "/{projectIdentifier}" })
-	public ResponseEntity<List<ProjectTask>> getAllProjectTasks(@PathVariable String projectIdentifier,Principal principal) {
-		List<ProjectTask> allProjectTask = projectTaskService.getAllProjectTasks(projectIdentifier.toUpperCase(),principal);
-		return new ResponseEntity<List<ProjectTask>>(allProjectTask, HttpStatus.OK);
+    @GetMapping({"/{projectIdentifier}"})
+    public ResponseEntity<List<ProjectTask>> getAllProjectTasks(@PathVariable String projectIdentifier, Principal principal) {
+        List<ProjectTask> allProjectTask = projectTaskService.getAllProjectTasks(projectIdentifier.toUpperCase(), principal);
+        return new ResponseEntity<List<ProjectTask>>(allProjectTask, HttpStatus.OK);
 
-	}
+    }
 
-	@GetMapping({ "/{projectIdentifier}/projectTask/{projectTaskSequence}" })
-	public ResponseEntity<?> getProjectTaskById(@PathVariable String projectIdentifier,
-			@PathVariable String projectTaskSequence,Principal principal) {
-		
-		ProjectTask foundProjectTask = projectTaskService.getProjectTaskByProjectTaskSequence(
-				projectIdentifier.toUpperCase(), projectTaskSequence.toUpperCase(),principal);
-		return new ResponseEntity<ProjectTask>(foundProjectTask, HttpStatus.OK);
-	}
-	
-	
-	@PutMapping({"/{projectIdentifier}/projectTask/{projectTaskSequence}"})
-	public ResponseEntity<?> updateProjectTask(@Valid @RequestBody ProjectTask updatedProjectTask,BindingResult result, @PathVariable String projectIdentifier,
-			@PathVariable String projectTaskSequence,Principal principal){
-			
-		ResponseEntity<Map<String, String>> errorMap = errorMapService.mapErrors(result);
-		if (errorMap != null)
-			return errorMap;
-		
-		ProjectTask returnedProjectTask=projectTaskService.updateProjectTask(projectIdentifier, projectTaskSequence, updatedProjectTask,principal);
-		return new ResponseEntity<ProjectTask>(returnedProjectTask,HttpStatus.OK);
-		
-		
-	}
+    @GetMapping({"/{projectIdentifier}/projectTask/{projectTaskSequence}"})
+    public ResponseEntity<?> getProjectTaskById(@PathVariable String projectIdentifier,
+                                                @PathVariable String projectTaskSequence, Principal principal) {
 
-	@DeleteMapping({ "/{projectIdentifier}/projectTask/{projectTaskSequence}" })
-	public ResponseEntity<?> deleteProjectTask(@PathVariable String projectIdentifier,
-			@PathVariable String projectTaskSequence,Principal principal) {
+        ProjectTask foundProjectTask = projectTaskService.getProjectTaskByProjectTaskSequence(
+                projectIdentifier.toUpperCase(), projectTaskSequence.toUpperCase(), principal);
+        return new ResponseEntity<ProjectTask>(foundProjectTask, HttpStatus.OK);
+    }
 
-		projectTaskService.deleteProjectTask(projectIdentifier, projectTaskSequence,principal);
-		return new ResponseEntity<String>("Project task deleted successfully", HttpStatus.OK);
-	}
-	
-	
-	@GetMapping({"/currentUser"})
-	public ResponseEntity<?> ListAssignedProjectTasks(Principal principal){
-		List<ProjectTask> projectTasks=projectTaskService.getAssignedProjectTasks(principal);
-		return new ResponseEntity<List<ProjectTask>>(projectTasks,HttpStatus.OK);
-	
-	}
+
+    @PutMapping({"/{projectIdentifier}/projectTask/{projectTaskSequence}"})
+    public ResponseEntity<?> updateProjectTask(@Valid @RequestBody ProjectTask updatedProjectTask, BindingResult result, @PathVariable String projectIdentifier,
+                                               @PathVariable String projectTaskSequence, Principal principal) {
+
+        ResponseEntity<Map<String, String>> errorMap = errorMapService.mapErrors(result);
+        if (errorMap != null)
+            return errorMap;
+
+        ProjectTask returnedProjectTask = projectTaskService.updateProjectTask(projectIdentifier, projectTaskSequence, updatedProjectTask, principal);
+        return new ResponseEntity<ProjectTask>(returnedProjectTask, HttpStatus.OK);
+
+
+    }
+
+    @DeleteMapping({"/{projectIdentifier}/projectTask/{projectTaskSequence}"})
+    public ResponseEntity<?> deleteProjectTask(@PathVariable String projectIdentifier,
+                                               @PathVariable String projectTaskSequence, Principal principal) {
+
+        projectTaskService.deleteProjectTask(projectIdentifier, projectTaskSequence, principal);
+        return new ResponseEntity<String>("Project task deleted successfully", HttpStatus.OK);
+    }
+
+
+    @GetMapping({"/currentUser"})
+    public ResponseEntity<?> ListAssignedProjectTasks(Principal principal) {
+        List<ProjectTask> projectTasks = projectTaskService.getAssignedProjectTasks(principal);
+        return new ResponseEntity<List<ProjectTask>>(projectTasks, HttpStatus.OK);
+
+    }
 
 
 }

@@ -7,9 +7,14 @@ import io.app.agileintent.domain.User;
 
 public interface ProjectMemberService {
 
-	public User addUserToProject(String projectIdentifier,String username,Principal principal);
-	public User removeUserfromProject(String projectIdentifier,String username,Principal principal);
-	public List<User> getProjectUsers(String projectIdentifier,Principal principal);
+	User addUserToProject(String projectIdentifier, String username, Principal principal);
 
-	public User assignUserToProjectTask(String projectIdentifier,String projectTaskSequence,String username,Principal principal);
+	User removeUserfromProject(String projectIdentifier, String username, Principal principal);
+
+	List<User> getProjectUsers(String projectIdentifier, Principal principal);
+
+	User assignUserToProjectTask(String projectIdentifier, String projectTaskSequence, String username,
+			Principal principal);
+
+	List<User> getProjectUsersByFirstName(String projectIdentifier, String firstName, Principal principal);
 }

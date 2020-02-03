@@ -1,5 +1,6 @@
 package io.app.agileintent.security;
 
+import static io.app.agileintent.security.SecurityConstants.ACTIVATE_USER_ROUTE;
 import static io.app.agileintent.security.SecurityConstants.AUTH_USER_ROUTE;
 import static io.app.agileintent.security.SecurityConstants.H2_ROUTE;
 import static io.app.agileintent.security.SecurityConstants.REGISTER_USER_ROUTE;
@@ -35,7 +36,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
 		authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
-
 	}
 
 	@Override
@@ -45,10 +45,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 				// h2 database config
 				.headers().frameOptions().sameOrigin().and().authorizeRequests()
-				.antMatchers("/", "/favicon.ico", "/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.html",
-						"/**/*.css", "/**/*.js")
+				.antMatchers("/", 
+						"/favicon.ico",
+						"/**/*.png",
+						"/**/*.gif", 
+						"/**/*.svg", 
+						"/**/*.jpg", 
+						"/**/*.html",
+						"/**/*.css", 
+						"/**/*.js")
 				.permitAll().antMatchers(AUTH_USER_ROUTE).permitAll().antMatchers(REGISTER_USER_ROUTE).permitAll()
-				.antMatchers(H2_ROUTE).permitAll()
+				.antMatchers(ACTIVATE_USER_ROUTE).permitAll().antMatchers(H2_ROUTE).permitAll()
 				.antMatchers("/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
 				.antMatchers("/actuator/*").permitAll().anyRequest().authenticated();
 

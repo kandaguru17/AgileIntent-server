@@ -57,7 +57,7 @@ public class AttachmentServiceImpl implements AttachmentService {
 
 		ProjectTask projectTask = projectTaskService.getProjectTaskByProjectTaskSequence(projectIdentifier,
 				projectTaskSequence, principal);
-		return attachmentRepoistory.findAllByProjectTaskId(projectTask.getId());
+		return attachmentRepoistory.fetchAttachments(projectTask.getId());
 	}
 
 	@Override

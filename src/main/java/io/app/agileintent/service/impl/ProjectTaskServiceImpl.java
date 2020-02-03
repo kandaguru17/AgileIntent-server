@@ -146,7 +146,7 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 		if (user == null)
 			throw new UserProfileException("No such user");
 
-		return projectTaskRepository.findAllByUserId(user.getId());
+		return projectTaskRepository.findAssignedProjectTasks(user.getId(),"DONE");
 
 	}
 }

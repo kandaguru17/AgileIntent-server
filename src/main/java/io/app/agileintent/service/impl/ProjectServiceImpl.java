@@ -105,14 +105,14 @@ public class ProjectServiceImpl implements ProjectService {
 		if (user == null)
 			throw new UserProfileException("No such user found");
 
-		return projectRepository.findAllProjects(user.getId());
+		return projectRepository.fetchProjects(user.getId());
 	}
 
 	public void deleteProjectByProjectIdentifier(String projectIdentifier, Principal principal) {
 		Project project = getProjectByProjectIdentifier(projectIdentifier, principal);
 		User user = userRepository.findByUsername(principal.getName());
 		
-		if(project.getReportingPerson().equals(principal.getName()))
+		if(!project.getReportingPerson().equals(principal.getName()))
 			throw new UserProfileException("Not authorized to delete the poject");
 		
 		// breaking the bi-directional link

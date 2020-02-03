@@ -10,7 +10,7 @@ import io.app.agileintent.domain.User;
 @Service
 public interface UserService {
 
-	User save(User user);
+	User registerUser(User user);
 	List<User> getAllUsers(Principal principal);
 	
 	

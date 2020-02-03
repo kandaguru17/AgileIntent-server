@@ -4,6 +4,8 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
+import javax.websocket.server.PathParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,8 +61,8 @@ public class ProjectMemberContoller {
 	}
 
 	@GetMapping({ "/{projectIdentifier}" })
-	public ResponseEntity<?> listProjectMembers(@PathVariable String projectIdentifier, Principal principal) {
-		List<User> projectUsers = projectMemberService.getProjectUsers(projectIdentifier, principal);
+	public ResponseEntity<?> listProjectMembers(@PathVariable String projectIdentifier,@PathParam("firstName") String firstName, Principal principal) {
+		List<User> projectUsers = projectMemberService.getProjectUsersByFirstName(projectIdentifier, firstName, principal);
 		return new ResponseEntity<List<User>>(projectUsers, HttpStatus.OK);
 	}
 
