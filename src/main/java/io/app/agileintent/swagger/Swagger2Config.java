@@ -3,7 +3,6 @@ package io.app.agileintent.swagger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
 
 import io.app.agileintent.domain.EmailConfirmation;

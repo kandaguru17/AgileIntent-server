@@ -98,8 +98,6 @@
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
-
-
 	</dependencies>
 
 	<build>
