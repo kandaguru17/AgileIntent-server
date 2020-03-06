@@ -1,79 +1,121 @@
 package io.app.agileintent.service.impl;
 
-import java.util.Date;
-
+import io.app.agileintent.domain.ConfirmationToken;
+import io.app.agileintent.domain.User;
+import io.app.agileintent.event.OnRegistrationCompleteEvent;
+import io.app.agileintent.event.PasswordResetEvent;
+import io.app.agileintent.exceptions.UserProfileException;
+import io.app.agileintent.repositories.ConfirmationTokenRepository;
+import io.app.agileintent.repositories.UserRepository;
+import io.app.agileintent.service.EmailConfirmationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import io.app.agileintent.domain.EmailConfirmation;
-import io.app.agileintent.domain.User;
-import io.app.agileintent.event.OnRegistrationCompleteEvent;
-import io.app.agileintent.exceptions.UserProfileException;
-import io.app.agileintent.repositories.EmailConfirmationRepository;
-import io.app.agileintent.repositories.UserRepository;
-import io.app.agileintent.service.EmailConfirmationService;
+import java.util.Date;
 
 @Service
 public class EmailConfirmationServiceImpl implements EmailConfirmationService {
 
-	@Autowired
-	private ApplicationEventPublisher applicationEventPublisher;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
-	@Autowired
-	private EmailConfirmationRepository emailConfirmationRepository;
+    @Autowired
+    private ConfirmationTokenRepository confirmationTokenRepository;
 
-	@Autowired
-	private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	@Value("${agileintent.registration.url}")
-	private String appUrl;
+    @Value("${agileintent.password-reset.url}")
+    private String appUrl;
 
-	@Override
-	@Async
-	public void sendRegistrationEmail(User newUser) {
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-		try {
-			applicationEventPublisher.publishEvent(new OnRegistrationCompleteEvent(appUrl, newUser));
-		} catch (Exception e) {
+    @Override
+    @Async
+    public void sendRegistrationEmail(User newUser) {
 
-			System.out.println(e.getMessage());
-		}
-	}
+        try {
+            applicationEventPublisher.publishEvent(new OnRegistrationCompleteEvent(newUser, appUrl));
+        } catch (Exception e) {
 
-	public User activateAccount(String token) {
+            System.err.println(e.getMessage());
+        }
+    }
 
-		EmailConfirmation emailconfirmation = emailConfirmationRepository.findByConfirmationToken(token);
 
-		if (emailconfirmation == null)
-			throw new UserProfileException("Invalid Activation Link");
+    @Override
+    @Async
+    public void sendPasswordResetEmail(User existingUser) {
+        existingUser.setEnabled(false);
+        try {
+            applicationEventPublisher.publishEvent(new PasswordResetEvent(existingUser, appUrl));
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
 
-		Date current = new Date();
-		Date expiryDate = emailconfirmation.getExpiresAt();
-		User registeredUser = emailconfirmation.getUser();
+    public User activateAccount(String token) {
 
-		if (expiryDate.compareTo(current) < 0) {
-			registeredUser.removeEmail(emailconfirmation);
-			userRepository.delete(registeredUser);
-			throw new UserProfileException("Activation Link expired");
-		}
+        ConfirmationToken confirmationToken = confirmationTokenRepository.findByConfirmationToken(token);
 
-		if (registeredUser.isEnabled())
-			throw new UserProfileException("Account already activated");
+        if (confirmationToken == null)
+            throw new UserProfileException("Invalid Activation Link");
 
-		registeredUser.setEnabled(true);
-		emailConfirmationRepository.delete(emailconfirmation);
-		
-		return userRepository.save(registeredUser);
+        Date current = new Date();
+        Date expiryDate = confirmationToken.getExpiresAt();
+        User registeredUser = confirmationToken.getUser();
 
-	}
+        if (expiryDate.compareTo(current) < 0) {
+            registeredUser.removeConfirmationToken(confirmationToken);
+            userRepository.delete(registeredUser);
+            throw new UserProfileException("Activation Link expired");
+        }
 
-	@Override
-	public void sendPasswordConfirmationEmail() {
-		// TODO Auto-generated method stub
+        if (registeredUser.isEnabled())
+            throw new UserProfileException("Account already activated");
 
-	}
+        registeredUser.setEnabled(true);
+        confirmationTokenRepository.delete(confirmationToken);
+
+        return userRepository.save(registeredUser);
+
+    }
+
+
+    @Override
+    public User resetPassword(User user, String resetToken) throws UserProfileException {
+
+        ConfirmationToken confirmationToken = confirmationTokenRepository.findByConfirmationToken(resetToken);
+
+        if (confirmationToken == null)
+            throw new UserProfileException("Invalid Activation Link");
+
+        User foundUser = confirmationToken.getUser();
+
+        if (!user.getPassword().equals(user.getConfirmPassword()))
+            throw new UserProfileException("Passwords do not match");
+
+        Date current = new Date();
+        Date expiryDate = confirmationToken.getExpiresAt();
+
+
+        if (expiryDate.compareTo(current) < 0) {
+            foundUser.removeConfirmationToken(confirmationToken);
+            confirmationTokenRepository.delete(confirmationToken);
+            throw new UserProfileException("Password reset Link expired");
+        }
+
+        foundUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        foundUser.setEnabled(true);
+        confirmationTokenRepository.delete(confirmationToken);
+        return userRepository.save(foundUser);
+
+    }
+
 
 }

@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.fasterxml.classmate.TypeResolver;
 
-import io.app.agileintent.domain.EmailConfirmation;
+import io.app.agileintent.domain.ConfirmationToken;
 import io.app.agileintent.security.AuthenticationResponse;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -29,7 +29,7 @@ public class Swagger2Config {
 		return new Docket(DocumentationType.SWAGGER_2).select()
 				.apis(RequestHandlerSelectors.basePackage("io.app.agileintent")).paths(PathSelectors.regex("/.*"))
 				.build().apiInfo(apiInfo()).additionalModels(typeResolver.resolve(AuthenticationResponse.class),
-						typeResolver.resolve(EmailConfirmation.class));
+						typeResolver.resolve(ConfirmationToken.class));
 	}
 
 	private ApiInfo apiInfo() {

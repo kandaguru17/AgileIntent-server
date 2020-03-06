@@ -9,7 +9,7 @@ public interface ProjectMemberService {
 
 	User addUserToProject(String projectIdentifier, String username, Principal principal);
 
-	User removeUserfromProject(String projectIdentifier, String username, Principal principal);
+	User removeUserFromProject(String projectIdentifier, String username, Principal principal);
 
 	List<User> getProjectUsers(String projectIdentifier, Principal principal);
 

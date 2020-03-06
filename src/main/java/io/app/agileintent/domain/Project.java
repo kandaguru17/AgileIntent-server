@@ -49,7 +49,7 @@ public class Project {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")
 	@Column(updatable = false)
 	private Date createdAt;
-	@JsonFormat(pattern = "yyyy-MM" + "-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")
 	private Date updatedAt;
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")

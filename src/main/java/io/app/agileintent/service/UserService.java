@@ -12,7 +12,4 @@ public interface UserService {
 
 	User registerUser(User user);
 	List<User> getAllUsers(Principal principal);
-	
-	
-	
 }

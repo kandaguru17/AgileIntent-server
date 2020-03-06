@@ -4,8 +4,10 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 
+import io.app.agileintent.model.UsernameModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,48 +32,55 @@ import io.app.agileintent.service.ProjectMemberService;
 @CrossOrigin
 public class ProjectMemberContoller {
 
-	@Autowired
-	private ErrorMapService errorMapService;
-	@Autowired
-	private ProjectMemberService projectMemberService;
+    @Autowired
+    private ErrorMapService errorMapService;
+    @Autowired
+    private ProjectMemberService projectMemberService;
 
-	@PostMapping({ "/{projectIdentifier}" })
-	public ResponseEntity<?> addProjectMembers(@Validated({ AddUserGroup.class }) @RequestBody User user,
-			BindingResult result, @PathVariable String projectIdentifier, Principal principal) {
+    @PostMapping({"/{projectIdentifier}"})
+    public ResponseEntity<?> addProjectMembers(@Valid @RequestBody UsernameModel user,
+                                               BindingResult result,
+                                               @PathVariable String projectIdentifier, Principal principal) {
 
-		ResponseEntity<Map<String, String>> error = errorMapService.mapErrors(result);
-		if (error != null)
-			return error;
+        ResponseEntity<Map<String, String>> error = errorMapService.mapErrors(result);
+        if (error != null)
+            return error;
 
-		User addedUser = projectMemberService.addUserToProject(projectIdentifier, user.getUsername(), principal);
-		return new ResponseEntity<User>(addedUser, HttpStatus.OK);
-	}
+        User addedUser = projectMemberService.addUserToProject(projectIdentifier, user.getUsername(), principal);
+        return new ResponseEntity<User>(addedUser, HttpStatus.OK);
+    }
 
-	@DeleteMapping({ "/{projectIdentifier}" })
-	public ResponseEntity<?> removeProjectMember(@Validated({ AddUserGroup.class }) @RequestBody User user,
-			BindingResult result, @PathVariable String projectIdentifier, Principal principal) {
+    @DeleteMapping({"/{projectIdentifier}"})
+    public ResponseEntity<?> removeProjectMember(@Valid @RequestBody UsernameModel user,
+                                                 BindingResult result,
+                                                 @PathVariable String projectIdentifier, Principal principal) {
 
-		ResponseEntity<Map<String, String>> error = errorMapService.mapErrors(result);
-		if (error != null)
-			return error;
+        ResponseEntity<Map<String, String>> error = errorMapService.mapErrors(result);
+        if (error != null)
+            return error;
 
-		User removedUser = projectMemberService.removeUserfromProject(projectIdentifier, user.getUsername(), principal);
-		return new ResponseEntity<User>(removedUser, HttpStatus.OK);
+        User removedUser = projectMemberService.removeUserFromProject(projectIdentifier, user.getUsername(), principal);
+        return new ResponseEntity<User>(removedUser, HttpStatus.OK);
 
-	}
+    }
 
-	@GetMapping({ "/{projectIdentifier}" })
-	public ResponseEntity<?> listProjectMembers(@PathVariable String projectIdentifier,@PathParam("firstName") String firstName, Principal principal) {
-		List<User> projectUsers = projectMemberService.getProjectUsersByFirstName(projectIdentifier, firstName, principal);
-		return new ResponseEntity<List<User>>(projectUsers, HttpStatus.OK);
-	}
+    @GetMapping({"/{projectIdentifier}"})
+    public ResponseEntity<?> listProjectMembers(
+            @PathVariable String projectIdentifier, @PathParam("firstName") String firstName, Principal principal) {
+        List<User> projectUsers = projectMemberService
+                .getProjectUsersByFirstName(projectIdentifier, firstName, principal);
+        return new ResponseEntity<List<User>>(projectUsers, HttpStatus.OK);
+    }
 
-	@PostMapping("assign/{projectIdentifier}/{projectTaskSequence}")
-	public ResponseEntity<?> assignUserToProjectTask(@Validated(AddUserGroup.class) @RequestBody User user,
-			@PathVariable String projectIdentifier, @PathVariable String projectTaskSequence,Principal principal) {
+    @PostMapping("assign/{projectIdentifier}/{projectTaskSequence}")
+    public ResponseEntity<?> assignUserToProjectTask(@Valid @RequestBody UsernameModel usernameModel,
+                                                     @PathVariable String projectIdentifier,
+                                                     @PathVariable String projectTaskSequence, Principal principal) {
 
-		User assignedUser=projectMemberService.assignUserToProjectTask(projectIdentifier, projectTaskSequence, user.getUsername(), principal);
-		return new ResponseEntity<User>(assignedUser,HttpStatus.OK);
-	}
+        User assignedUser = projectMemberService
+                .assignUserToProjectTask(projectIdentifier, projectTaskSequence, usernameModel.getUsername(),
+                        principal);
+        return new ResponseEntity<User>(assignedUser, HttpStatus.OK);
+    }
 
 }

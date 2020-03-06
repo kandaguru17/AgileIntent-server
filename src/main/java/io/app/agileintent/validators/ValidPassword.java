@@ -1,5 +1,7 @@
 package io.app.agileintent.validators;
 
+import io.app.agileintent.domain.ResetPassword;
+
 import java.lang.annotation.*;
 
 import javax.validation.Constraint;

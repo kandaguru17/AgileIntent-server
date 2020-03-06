@@ -18,12 +18,13 @@ import io.app.agileintent.exceptions.UserProfileException;
 
 public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, String> {
 
+
 	@Override
 	public boolean isValid(String password, ConstraintValidatorContext context) {
 
 		if(password==null)
-			throw new UserProfileException("Password Cannot be null");
-				
+			return false;
+
 		PasswordValidator validator = new PasswordValidator(Arrays.asList(
 				// at least 8 characters
 				//new LengthRule(8, 15),
@@ -46,18 +47,18 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
 		));
 
 		RuleResult result = validator.validate(new PasswordData(password));
-	
+
 		if (result.isValid()) {
 			return true;
 		}
-		
+
 		List<String> messages = validator.getMessages(result);
 
 		String messageTemplate = messages.stream().collect(Collectors.joining(","));
 
 		context.buildConstraintViolationWithTemplate(messageTemplate).addConstraintViolation()
 				.disableDefaultConstraintViolation();
-		
+
 		return false;
 	}
 

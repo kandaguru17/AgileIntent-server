@@ -17,7 +17,7 @@ import javax.persistence.PrePersist;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
-public class EmailConfirmation {
+public class ConfirmationToken {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,7 +38,7 @@ public class EmailConfirmation {
 	@JoinColumn(nullable = false, updatable = false, name = "user_id")
 	private User user;
 
-	public EmailConfirmation() {
+	public ConfirmationToken() {
 	}
 
 	@PrePersist

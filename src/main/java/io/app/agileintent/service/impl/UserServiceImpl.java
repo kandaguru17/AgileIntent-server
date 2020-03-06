@@ -20,6 +20,7 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+
 	
 
 	@Override
@@ -36,10 +37,9 @@ public class UserServiceImpl implements UserService {
 			throw new UserProfileException("Password do not match!");
 
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-		user.setConfirmPassword(null);
+//		user.setConfirmPassword(null);
 		user.setFirstName(user.getFirstName().substring(0,1).toUpperCase() +user.getFirstName().substring(1));
 		user.setLastName(user.getLastName().substring(0,1).toUpperCase() +user.getLastName().substring(1));
-		
 
 		return userRepository.save(user);
 	}
@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
 
 		return userRepository.findAll();
 	}
+
 
 
 
