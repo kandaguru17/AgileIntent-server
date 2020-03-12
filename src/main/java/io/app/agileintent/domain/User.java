@@ -1,38 +1,20 @@
 package io.app.agileintent.domain;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Transient;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
-
 import io.app.agileintent.validators.ValidPassword;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 public class User implements UserDetails {
@@ -48,8 +30,7 @@ public class User implements UserDetails {
 
     @NotBlank(message = "User name cannot be empty")
     @Column(unique = true)
-    @Email(message = "User name must be a Email Id",
-            groups = {AddUserGroup.class, ForgotPassword.class})
+    @Email(message = "User name must be a Email Id")
     private String username;
 
     @NotBlank(message = "First Name is mandatory")
@@ -65,8 +46,7 @@ public class User implements UserDetails {
 
     @Transient
     @JsonProperty(access = Access.WRITE_ONLY)
-    @NotBlank(message = "confirm password can not be empty")
-    @ValidPassword
+//    @ValidPassword
     private String confirmPassword;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_NZ", timezone = "Pacific/Auckland")

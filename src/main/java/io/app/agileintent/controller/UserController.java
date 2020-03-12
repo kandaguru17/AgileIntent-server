@@ -1,9 +1,9 @@
 package io.app.agileintent.controller;
 
-import io.app.agileintent.domain.ForgotPassword;
 import io.app.agileintent.domain.ResetPassword;
 import io.app.agileintent.domain.User;
 import io.app.agileintent.exceptions.UserProfileException;
+import io.app.agileintent.model.UsernameModel;
 import io.app.agileintent.security.AuthenticationRequest;
 import io.app.agileintent.security.AuthenticationResponse;
 import io.app.agileintent.security.JwtTokenProvider;
@@ -67,8 +67,7 @@ public class UserController {
     }
 
     @PostMapping({"/register"})
-    public ResponseEntity<?> authenticate(@Valid @RequestBody User user, BindingResult result) throws
-            InterruptedException {
+    public ResponseEntity<?> authenticate(@Valid @RequestBody User user, BindingResult result) {
 
         ResponseEntity<Map<String, String>> error = errorMapService.mapErrors(result);
         if (error != null)
@@ -82,14 +81,15 @@ public class UserController {
 
     @GetMapping({"/activate"})
     public ResponseEntity<?> activateAccount(@RequestParam String token) {
+
+        System.out.println(token);
         User activatedUser = emailConfirmationService.activateAccount(token);
         return new ResponseEntity<User>(activatedUser, HttpStatus.OK);
     }
 
 
     @PostMapping("/forgotPassword")
-    public ResponseEntity<?> forgotPassword(
-            @Validated(ForgotPassword.class) @RequestBody User user, BindingResult result) {
+    public ResponseEntity<?> forgotPassword(@RequestBody UsernameModel user, BindingResult result) {
 
         ResponseEntity<Map<String, String>> error = errorMapService.mapErrors(result);
         if (error != null)

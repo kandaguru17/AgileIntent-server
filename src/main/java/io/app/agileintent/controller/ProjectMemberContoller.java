@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.app.agileintent.domain.AddUserGroup;
 import io.app.agileintent.domain.User;
 import io.app.agileintent.service.ErrorMapService;
 import io.app.agileintent.service.ProjectMemberService;
@@ -66,11 +64,24 @@ public class ProjectMemberContoller {
 
     @GetMapping({"/{projectIdentifier}"})
     public ResponseEntity<?> listProjectMembers(
+            @PathVariable String projectIdentifier, Principal principal) {
+
+        List<User> projectUsers = projectMemberService
+                .getProjectUsers(projectIdentifier, principal);
+
+        return new ResponseEntity<List<User>>(projectUsers, HttpStatus.OK);
+    }
+
+
+    @GetMapping({"search/{projectIdentifier}"})
+    public ResponseEntity<?> searchProjectMembers(
             @PathVariable String projectIdentifier, @PathParam("firstName") String firstName, Principal principal) {
         List<User> projectUsers = projectMemberService
                 .getProjectUsersByFirstName(projectIdentifier, firstName, principal);
+
         return new ResponseEntity<List<User>>(projectUsers, HttpStatus.OK);
     }
+
 
     @PostMapping("assign/{projectIdentifier}/{projectTaskSequence}")
     public ResponseEntity<?> assignUserToProjectTask(@Valid @RequestBody UsernameModel usernameModel,

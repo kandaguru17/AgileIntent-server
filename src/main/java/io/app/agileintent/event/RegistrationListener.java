@@ -25,16 +25,15 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
                 + "Note that this link would be active only for an hour from now.\n Activation URL :";
 
         User user = onRegistrationCompleteEvent.getUser();
-        ConfirmationToken confirmationToken = new ConfirmationToken();
-        user.addConfirmationToken(confirmationToken);
+        ConfirmationToken confirmationToken = new ConfirmationToken(user);
         ConfirmationToken savedConfirmationToken = confirmationTokenRepository.save(confirmationToken);
-
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(user.getUsername());
         mailMessage.setSubject("Complete Registration!");
         mailMessage.setFrom("agileintent.business@gmail.com");
         mailMessage.setText(mailBody + onRegistrationCompleteEvent.getAppUrl() + "?token="
                 + savedConfirmationToken.getConfirmationToken());
+
 
         emailService.sendEmail(mailMessage);
 

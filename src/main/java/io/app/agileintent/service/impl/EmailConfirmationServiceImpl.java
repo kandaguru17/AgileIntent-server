@@ -29,7 +29,7 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
     @Autowired
     private UserRepository userRepository;
 
-    @Value("${agileintent.password-reset.url}")
+    @Value("${agileintent.registration.url}")
     private String appUrl;
 
     @Autowired
@@ -80,6 +80,7 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
             throw new UserProfileException("Account already activated");
 
         registeredUser.setEnabled(true);
+
         confirmationTokenRepository.delete(confirmationToken);
 
         return userRepository.save(registeredUser);
@@ -113,9 +114,9 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
         foundUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         foundUser.setEnabled(true);
         confirmationTokenRepository.delete(confirmationToken);
+
         return userRepository.save(foundUser);
 
     }
-
 
 }

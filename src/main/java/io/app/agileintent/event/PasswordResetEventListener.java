@@ -24,8 +24,7 @@ public class PasswordResetEventListener implements ApplicationListener<PasswordR
         String mailBody = "To reset your Account Password, Please click the following link.\n "
                 + "Note that this link would be active only for an hour from now.\n Password Reset URL :";
 
-        ConfirmationToken passwordResetToken = new ConfirmationToken();
-        passwordResetToken.setUser(event.getUser());
+        ConfirmationToken passwordResetToken = new ConfirmationToken(event.getUser());
         ConfirmationToken savedPasswordResetToken = confirmationTokenRepository.save(passwordResetToken);
 
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();

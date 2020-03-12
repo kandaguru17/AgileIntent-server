@@ -14,8 +14,8 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 
     @ExceptionHandler(ProjectIdException.class)
     public final ResponseEntity<?> handleProjectIdException(ProjectIdException ex, WebRequest req) {
-        ProjectIdExceptionMessage projectIdExceptionRepsonse = new ProjectIdExceptionMessage(ex.getMessage());
-        return new ResponseEntity<ProjectIdExceptionMessage>(projectIdExceptionRepsonse, HttpStatus.CONFLICT);
+        ProjectIdExceptionMessage projectIdExceptionResponse = new ProjectIdExceptionMessage(ex.getMessage());
+        return new ResponseEntity<ProjectIdExceptionMessage>(projectIdExceptionResponse, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ProjectNotFoundException.class)
@@ -43,11 +43,5 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         AttachmentExceptionMessage commentExceptionMessage = new AttachmentExceptionMessage(ex.getMessage());
         return new ResponseEntity<AttachmentExceptionMessage>(commentExceptionMessage, HttpStatus.BAD_REQUEST);
     }
-
-//    @ExceptionHandler(Exception.class)
-//    public final ResponseEntity<?> handleGenericExceptions(Exception ex, WebRequest req) {
-//        GenericExceptionMessage exceptionMessage = new GenericExceptionMessage(ex.getMessage());
-//        return ResponseEntity.badRequest().body(exceptionMessage);
-//    }
 
 }
