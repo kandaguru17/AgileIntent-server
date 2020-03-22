@@ -30,7 +30,10 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
     private UserRepository userRepository;
 
     @Value("${agileintent.registration.url}")
-    private String appUrl;
+    private String confirmAccountUrl;
+
+    @Value("${agileintent.password-reset.url}")
+    private String passwordResetUrl;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -40,7 +43,7 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
     public void sendRegistrationEmail(User newUser) {
 
         try {
-            applicationEventPublisher.publishEvent(new OnRegistrationCompleteEvent(newUser, appUrl));
+            applicationEventPublisher.publishEvent(new OnRegistrationCompleteEvent(newUser, confirmAccountUrl));
         } catch (Exception e) {
 
             System.err.println(e.getMessage());
@@ -53,8 +56,9 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
     public void sendPasswordResetEmail(User existingUser) {
         existingUser.setEnabled(false);
         try {
-            applicationEventPublisher.publishEvent(new PasswordResetEvent(existingUser, appUrl));
+            applicationEventPublisher.publishEvent(new PasswordResetEvent(existingUser, passwordResetUrl));
         } catch (Exception e) {
+
             System.err.println(e.getMessage());
         }
     }
@@ -72,7 +76,6 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
 
         if (expiryDate.compareTo(current) < 0) {
             registeredUser.removeConfirmationToken(confirmationToken);
-            userRepository.delete(registeredUser);
             throw new UserProfileException("Activation Link expired");
         }
 

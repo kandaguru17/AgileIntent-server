@@ -1,7 +1,6 @@
 package io.app.agileintent.event;
 
 import io.app.agileintent.domain.ConfirmationToken;
-import io.app.agileintent.exceptions.UserProfileException;
 import io.app.agileintent.repositories.ConfirmationTokenRepository;
 import io.app.agileintent.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -82,7 +82,6 @@ public class UserController {
     @GetMapping({"/activate"})
     public ResponseEntity<?> activateAccount(@RequestParam String token) {
 
-        System.out.println(token);
         User activatedUser = emailConfirmationService.activateAccount(token);
         return new ResponseEntity<User>(activatedUser, HttpStatus.OK);
     }
