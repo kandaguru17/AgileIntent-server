@@ -6,10 +6,10 @@ services:
       - 3307:3306
       restart: always
       environment:
-      - MYSQL_ROOT_PASSWORD=Kbas663_01
+      - MYSQL_ROOT_PASSWORD=pwds
       - MYSQL_DATABASE=agile-intent
       - MYSQL_USER=kbas663
-      - MYSQL_PASSWORD=Kbas663_01
+      - MYSQL_PASSWORD=pwds
       volumes:
       - mysql-db-volume:/var/lib/mysql-container
       networks:
